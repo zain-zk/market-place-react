@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+/* -------- Fonts -------- */
+* {
+  font-family: "Times New Roman", Times, serif;
+}
+
+.loginbgdark {
+  background: linear-gradient(to right, #06140f, #0b1f17, #060b08);
+}
+
+/* -------- Global themes -------- */
+
+/* Define default (dark) CSS variables */
+:root {
+  --bg-main: #000000;
+  --bg-alt: #0f172a;
+  --bg-dark: #000000;
+
+  --bg-hero-from: #000000;
+  --bg-hero-via: #14532d;
+  --bg-hero-to: #000000;
+
+  --bg-how-from: #14532d;
+  --bg-how-via: #000000;
+  --bg-how-to: #14532d;
+
+  --text-main: #f9fafb;
+  --text-light: #9ca3af;
+  --text-accent: #080a09;
+  --text-inverse: #000000;
+
+  --border-main: #374151;
+  --border-accent: #34d399;
+}
+
+/* Light theme overrides for hard-coded Tailwind classes */
+body.light-theme {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Navbar, sections */
+body.light-theme .bg-black {
+  background-color: #062c04 !important;
+}
+body.light-theme .bg-green-950 {
+  background-color: #f9fafb !important; /* cards */
+}
+body.light-theme .login {
+  background-color: white !important;
+}
+body.light-theme .sidebar {
+  color: rgb(0, 0, 0) !important;
+}
+body.light-theme .loginbglight {
+  background: linear-gradient(
+    to right,
+    #549157,
+    #46864f
+  ) !important; /* cards */
+}
+body.light-theme .bgcard {
+  background: linear-gradient(
+    to bottom right,
+    /* same as 'to-br' */ rgba(255, 255, 255, 0.8),
+    /* gray-900 with 80% opacity */ rgba(176, 176, 180, 0.6)
+      /* black with 60% opacity */
+  ) !important; /* cards */
+}
+
+body.light-theme .text-gray-400,
+body.light-theme .text-gray-500 {
+  color: #000000 !important;
+}
+body.light-theme .text-white,
+body.light-theme .text-gray-300 {
+  color: #000000 !important;
+}
+body.light-theme input {
+  background-color: transparent !important;
+}
+body.light-theme textarea {
+  background-color: transparent !important;
+}
+body.light-theme .loginput {
+  background-color: transparent !important;
+  color: white !important;
+}
+body.light-theme .serviceinput {
+  background-color: transparent !important;
+  color: black !important;
+}
+body.light-theme .text-green-400,
+body.light-theme .text-green-500 {
+  color: #059669 !important;
+}
+body.light-theme .border-green-800 {
+  border-color: #059669 !important;
+}
+
+/* Buttons */
+body.light-theme .bg-green-600 {
+  background-color: #059669 !important;
+}
+body.light-theme .hover\:bg-green-500:hover {
+  background-color: #16a34a !important;
+}
+
+/* Gradient overrides (cover all variants used) */
+body.light-theme .from-black {
+  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgba(217, 7, 7, 0)) !important;
+}
+body.light-theme .via-green-950 {
+  --tw-gradient-via: #e0f2f1 !important;
+}
+body.light-theme .to-black {
+  --tw-gradient-to: #ffffff !important;
+}
+
+body.light-theme .from-green-950 {
+  --tw-gradient-from: #f9fafb !important;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgb(255 255 255 / 0)) !important;
+}
+body.light-theme .via-black {
+  --tw-gradient-via: #394e4c !important;
+}
+body.light-theme .to-green-950 {
+  --tw-gradient-to: #ffffff !important;
+}
+
+/* -------- Apply variables globally -------- */
+/* body {
+  @apply min-h-screen;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+} */
+
+/* -------- Utility classes using variables -------- */
+/* .bg-main       { background-color: var(--bg-main); }
+.bg-alt        { background-color: var(--bg-alt); }
+.bg-dark       { background-color: var(--bg-dark); }
+
+.text-main     { color: var(--text-main); }
+.text-light    { color: var(--text-light); }
+.text-accent   { color: var(--text-accent); }
+.text-inverse  { color: var(--text-inverse); }
+
+.border-main   { border-color: var(--border-main); }
+.border-accent { border-color: var(--border-accent); } */
+
+/* Gradient helpers */
+.bg-hero {
+  background-image: linear-gradient(
+    to right,
+    var(--bg-hero-from),
+    var(--bg-hero-via),
+    var(--bg-hero-to)
+  );
+}
+.bg-how {
+  background-image: linear-gradient(
+    to right,
+    var(--bg-how-from),
+    var(--bg-how-via),
+    var(--bg-how-to)
+  );
+}
+
+/* Card helper */
+.card {
+  background-color: var(--bg-alt);
+  border: 1px solid var(--border-main);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+/* -------- 3D Utilities -------- */
+.perspective {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* -------- Input number spinner removal -------- */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
