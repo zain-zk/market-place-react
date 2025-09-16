@@ -52,7 +52,7 @@ const MainPage = ({ role: propRole }) => {
     try {
       setLoadingTasks(true);
       const res = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/requirements`
+        `${import.meta.env.VITE_BACKEND_URL}/api/requirements`
       );
       const data = await res.json();
       if (res.ok) {
@@ -98,7 +98,7 @@ const MainPage = ({ role: propRole }) => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/requirements`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/requirements`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

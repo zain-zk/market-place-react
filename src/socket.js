@@ -1,8 +1,8 @@
-import  {io} from "socket.io-client";
+import { io } from "socket.io-client";
 
 //connect to backend
-const socket = io("http://localhost:5000", {
-    transports: ["websocket"],
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
+  transports: ["websocket"],
 });
 
 export default socket;

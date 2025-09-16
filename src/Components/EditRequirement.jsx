@@ -20,7 +20,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/requirements/${req._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/requirements/${req._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

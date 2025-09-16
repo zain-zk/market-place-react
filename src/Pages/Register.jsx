@@ -56,7 +56,7 @@ export default function Register() {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/users/register`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

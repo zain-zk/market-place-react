@@ -21,7 +21,9 @@ const ChatPage = () => {
     async function fetchHistory() {
       try {
         const { data } = await axios.get(
-          " https://market-place-react.vercel.app/api/messages/${user._id}/${otherUserId}/${bidId}"
+          `${import.meta.env.VITE_BACKEND_URL}/api/messages/${
+            user._id
+          }/${otherUserId}/${bidId}`
         );
         setMessages(data);
       } catch (err) {
@@ -49,7 +51,7 @@ const ChatPage = () => {
     };
 
     try {
-      await axios.post(`${process.env.REACT_APP_BASE_URL}/api/messages`, msg);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/messages`, msg);
 
       socket.emit("sendMessage", msg); // send saved message
       setMessages((prev) => [...prev, msg]);

@@ -27,7 +27,7 @@ const RequirementsPage = () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/api/requirements/my/${clientId}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/requirements/my/${clientId}`
         );
         setRequirements(res.data);
       } catch (err) {
@@ -42,7 +42,9 @@ const RequirementsPage = () => {
   const handleViewBids = async (requirementId) => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/bids/requirements/${requirementId}/bids`
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/bids/requirements/${requirementId}/bids`
       );
       setSelectedBids(res.data);
       setIsBidsOpen(true);
@@ -55,7 +57,7 @@ const RequirementsPage = () => {
   const handleUpdateStatus = async (bidId, newStatus) => {
     try {
       const res = await axios.put(
-        `${process.env.REACT_APP_BASE_URL}/api/bids/${bidId}/status`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/bids/${bidId}/status`,
         { status: newStatus }
       );
       setSelectedBids((prevBids) =>
@@ -72,7 +74,7 @@ const RequirementsPage = () => {
     if (!window.confirm("⚠️ Delete this requirement?")) return;
     try {
       await axios.delete(
-        `${process.env.REACT_APP_BASE_URL}/api/requirements/${reqId}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/requirements/${reqId}`
       );
       setRequirements((prev) => prev.filter((r) => r._id !== reqId));
     } catch (err) {
