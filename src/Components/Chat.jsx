@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import io from "socket.io-client";
 import userContext from "../contexts/userContext";
 
-const socket = io(process.env.REACT_APP_BASE_URL);
+const socket = io("https://market-place-react.vercel.app");
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const ChatPage = () => {
     async function fetchHistory() {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/api/messages/${user._id}/${otherUserId}/${bidId}`
+          " https://market-place-react.vercel.app/api/messages/${user._id}/${otherUserId}/${bidId}"
         );
         setMessages(data);
       } catch (err) {
