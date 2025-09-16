@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import io from "socket.io-client";
 import userContext from "../contexts/userContext";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://market-place-react.vercel.app");
 
 const ChatPage = () => {
   const navigate = useNavigate();
