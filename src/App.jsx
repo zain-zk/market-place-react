@@ -17,7 +17,7 @@ const App = () => {
       try {
         if (!token) return;
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/users/me`,
+          `${process.env.REACT_APP_BASE_URL}/api/users/me`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
