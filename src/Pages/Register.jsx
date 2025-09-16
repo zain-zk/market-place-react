@@ -55,11 +55,14 @@ export default function Register() {
     };
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/users/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData),
+        }
+      );
 
       const data = await res.json();
       console.log("Server Response", data);

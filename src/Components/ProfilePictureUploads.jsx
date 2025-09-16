@@ -25,7 +25,7 @@ export default function ProfilePictureUpload({
       setUploading(true);
 
       const { data } = await axios.put(
-        `${process.env.REACT_APP_BASE_URL}/users/avatar`,
+        `${process.env.REACT_APP_BASE_URL}/api/users/avatar`,
         formData,
         {
           headers: {

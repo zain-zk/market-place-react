@@ -51,7 +51,9 @@ const MainPage = ({ role: propRole }) => {
   const fetchRequirements = async () => {
     try {
       setLoadingTasks(true);
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/requirements`);
+      const res = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/requirements`
+      );
       const data = await res.json();
       if (res.ok) {
         setRequirements(data);
@@ -95,17 +97,20 @@ const MainPage = ({ role: propRole }) => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/requirements`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          client: userId,
-          title,
-          description,
-          price,
-          location,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/requirements`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            client: userId,
+            title,
+            description,
+            price,
+            location,
+          }),
+        }
+      );
 
       const data = await res.json();
       if (res.ok) {

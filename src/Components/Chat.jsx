@@ -21,7 +21,7 @@ const ChatPage = () => {
     async function fetchHistory() {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/messages/${user._id}/${otherUserId}/${bidId}`
+          `${process.env.REACT_APP_BASE_URL}/api/messages/${user._id}/${otherUserId}/${bidId}`
         );
         setMessages(data);
       } catch (err) {
@@ -49,7 +49,7 @@ const ChatPage = () => {
     };
 
     try {
-      await axios.post(`${process.env.REACT_APP_BASE_URL}/messages`, msg);
+      await axios.post(`${process.env.REACT_APP_BASE_URL}/api/messages`, msg);
 
       socket.emit("sendMessage", msg); // send saved message
       setMessages((prev) => [...prev, msg]);

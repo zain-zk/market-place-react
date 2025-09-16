@@ -4,7 +4,7 @@ import { use } from "react";
 import userContext from "../contexts/userContext";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL, // Update to your backend URL
+  baseURL: `${process.env.REACT_APP_BASE_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },

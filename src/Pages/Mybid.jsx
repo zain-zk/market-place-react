@@ -29,7 +29,7 @@ const MyBidsPage = () => {
     const fetchBids = async () => {
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/bids/my-bids`,
+          `${process.env.REACT_APP_BASE_URL}/api/bids/my-bids`,
           {
             params: { provider: providerId },
           }
@@ -46,7 +46,7 @@ const MyBidsPage = () => {
   const handleWithdraw = async (bidId) => {
     try {
       const res = await axios.delete(
-        `${process.env.REACT_APP_BASE_URL}/bids/${bidId}`
+        `${process.env.REACT_APP_BASE_URL}/api/bids/${bidId}`
       );
       console.log("Bid deleted:", res.data);
       setMyBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
