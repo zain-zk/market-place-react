@@ -1,5 +1,5 @@
 // src/pages/LoginPage.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { notifyError, notifyInfo, notifySuccess } from "../utils/toast.js";
