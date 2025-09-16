@@ -11,9 +11,19 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const { user, setUser } = useContext(userContext);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      if (user?.role) {
+        navigate(`/main/${user.role}`, { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [navigate]);
 
   // ✅ Updated handleLogin (cleaner + role navigation)
-  const { user, setUser } = useContext(userContext);
   const handleLogin = async (e) => {
     e.preventDefault();
 
