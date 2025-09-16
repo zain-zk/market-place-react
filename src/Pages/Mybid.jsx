@@ -28,9 +28,12 @@ const MyBidsPage = () => {
   useEffect(() => {
     const fetchBids = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/bids/my-bids", {
-          params: { provider: providerId },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/bids/my-bids`,
+          {
+            params: { provider: providerId },
+          }
+        );
         setMyBids(res.data);
       } catch (err) {
         console.error("Error fetching bids:", err);
@@ -42,7 +45,9 @@ const MyBidsPage = () => {
 
   const handleWithdraw = async (bidId) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/bids/${bidId}`);
+      const res = await axios.delete(
+        `${process.env.REACT_APP_BASE_URL}/bids/${bidId}`
+      );
       console.log("Bid deleted:", res.data);
       setMyBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
       notifySuccess("Bid withdrawn successfully ✅");

@@ -20,7 +20,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/requirements/${req._id}`,
+        `${process.env.REACT_APP_BASE_URL}/requirements/${req._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

@@ -26,7 +26,7 @@ const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/bids",
+        ` ${process.env.REACT_APP_BASE_URL}/bids`,
         bidData
       );
       onSubmit(response.data); // send back to parent

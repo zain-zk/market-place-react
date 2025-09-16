@@ -4,7 +4,7 @@ import { use } from "react";
 import userContext from "../contexts/userContext";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api", // Update to your backend URL
+  baseURL: process.env.REACT_APP_BASE_URL, // Update to your backend URL
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,17 +32,17 @@ axiosInstance.interceptors.request.use(
 );
 
 // Optional: Response interceptor for handling expired tokens globally
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       // Optional: logout user or redirect to login
-//       localStorage.removeItem("token");
-//       localStorage.removeItem("user");
-//       window.location.href = "/login"; // or use navigate in React Router
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Optional: logout user or redirect to login
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login"; // or use navigate in React Router
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

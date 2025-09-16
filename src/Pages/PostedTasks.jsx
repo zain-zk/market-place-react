@@ -27,7 +27,7 @@ const RequirementsPage = () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          `http://localhost:5000/api/requirements/my/${clientId}`
+          `${process.env.REACT_APP_BASE_URL}/requirements/my/${clientId}`
         );
         setRequirements(res.data);
       } catch (err) {
@@ -42,7 +42,7 @@ const RequirementsPage = () => {
   const handleViewBids = async (requirementId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/bids/requirements/${requirementId}/bids`
+        `${process.env.REACT_APP_BASE_URL}/bids/requirements/${requirementId}/bids`
       );
       setSelectedBids(res.data);
       setIsBidsOpen(true);
@@ -55,7 +55,7 @@ const RequirementsPage = () => {
   const handleUpdateStatus = async (bidId, newStatus) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/bids/${bidId}/status`,
+        `${process.env.REACT_APP_BASE_URL}/bids/${bidId}/status`,
         { status: newStatus }
       );
       setSelectedBids((prevBids) =>
@@ -71,7 +71,9 @@ const RequirementsPage = () => {
   const handleDeleteRequirement = async (reqId) => {
     if (!window.confirm("⚠️ Delete this requirement?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/requirements/${reqId}`);
+      await axios.delete(
+        `${process.env.REACT_APP_BASE_URL}/requirements/${reqId}`
+      );
       setRequirements((prev) => prev.filter((r) => r._id !== reqId));
     } catch (err) {
       console.error("FAILED TO DELETE REQUIREMENT", err);

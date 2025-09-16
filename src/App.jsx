@@ -16,11 +16,14 @@ const App = () => {
     async function fetchUser() {
       try {
         if (!token) return;
-        const res = await axios.get("http://localhost:5000/api/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (res.data) {
           setUser(res.data.user);
