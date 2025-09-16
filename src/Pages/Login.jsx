@@ -23,7 +23,7 @@ const LoginPage = () => {
     }
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/users/login`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
