@@ -22,11 +22,14 @@ const LoginPage = () => {
       return;
     }
     try {
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }), // ✅ no name
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/users/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }), // ✅ no name
+        }
+      );
 
       const data = await res.json();
       console.log("Login Response:", data);
