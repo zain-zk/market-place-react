@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import ViewBidsModal from "../Components/ViewBids";
 import EditRequirement from "../Components/EditRequirement";
 import DropdownMenu from "../Components/DropdownMenu";
-import { notifyError, notifyInfo } from "../utils/toast";
+import { notifySuccess, notifyError, notifyInfo } from "../utils/toast";
 import userContext from "../contexts/userContext";
 
 const RequirementsPage = () => {
@@ -21,7 +21,6 @@ const RequirementsPage = () => {
   const [selectedBids, setSelectedBids] = useState([]);
   const [edittingId, setEdittingId] = useState(null);
 
-  console.log(user);
   useEffect(() => {
     const fetchRequirements = async () => {
       try {
@@ -70,13 +69,25 @@ const RequirementsPage = () => {
     }
   };
 
+  // assuming you have both requirements & bids state in this component:
+  const [bids, setBids] = useState([]);
+
+  // your delete handler
   const handleDeleteRequirement = async (reqId) => {
     if (!window.confirm("⚠️ Delete this requirement?")) return;
+
     try {
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/api/requirements/${reqId}`
       );
+
+      // remove the requirement from UI
       setRequirements((prev) => prev.filter((r) => r._id !== reqId));
+
+      // ✅ also remove all bids linked to this requirement
+      setBids((prev) => prev.filter((b) => b.requirement !== reqId));
+
+      notifySuccess("Requirement and its bids deleted");
     } catch (err) {
       console.error("FAILED TO DELETE REQUIREMENT", err);
       notifyError("Failed to delete requirement");
