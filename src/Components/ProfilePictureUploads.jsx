@@ -50,7 +50,7 @@ export default function ProfilePictureUpload({
       // 🔔 Dispatch custom event so Sidebar updates immediately
       window.dispatchEvent(new Event("avatarUpdated"));
 
-      notifySuccess("Profile picture updated successfully ✅");
+      notifySuccess("Profile picture updated successfully✅");
     } catch (error) {
       console.error("Upload error:", error);
       notifyError(

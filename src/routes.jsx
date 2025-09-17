@@ -28,7 +28,7 @@ export const AppRoutes = () => {
       <Route
         path="/main/client"
         element={
-          <PrivateRoute>
+          <PrivateRoute allowedRoles={"client"}>
             <MainPage role="client" />
           </PrivateRoute>
         }
@@ -36,7 +36,7 @@ export const AppRoutes = () => {
       <Route
         path="/main/provider"
         element={
-          <PrivateRoute>
+          <PrivateRoute allowedRoles={"provider"}>
             <MainPage role="provider" />
           </PrivateRoute>
         }
