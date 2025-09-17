@@ -230,11 +230,18 @@ export default function Register() {
               </div>
             </div>
           )}
-
+          <label className="flex items-center text-sm text-gray-400  mt-2 select-none">
+            <input
+              type="checkbox"
+              required
+              className="mr-2 accent-emerald-500 "
+            />
+            I agree to the platform accessing my information
+          </label>
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full mt-8  sm:mt-10 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-base sm:text-lg py-3 font-semibold transition"
+            className="w-full mt-8  sm:mt-8 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-base sm:text-lg py-3 font-semibold transition"
           >
             Register Now
           </button>

@@ -140,10 +140,14 @@ const LoginPage = () => {
             </div>
 
             {/* Checkbox */}
-            <label className="flex items-center text-sm text-gray-400  select-none">
-              <input type="checkbox" className="mr-2 accent-emerald-500" />I
-              agree to the platform accessing my information
-            </label>
+            {/* <label className="flex items-center text-sm text-gray-400  select-none">
+              <input
+                type="checkbox"
+                required
+                className="mr-2 accent-emerald-500 "
+              />
+              I agree to the platform accessing my information
+            </label> */}
 
             {/* Button */}
             <button
