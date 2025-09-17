@@ -18,11 +18,10 @@ const LoginPage = () => {
       if (user?.role) {
         navigate(`/main/${user.role}`, { replace: true });
       } else {
-        navigate("/", { replace: true });
+        navigate("/login", { replace: true });
       }
     }
-  }, [navigate]);
-
+  }, [navigate, user?.role]);
   // ✅ Updated handleLogin (cleaner + role navigation)
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,7 +46,6 @@ const LoginPage = () => {
       if (res.ok) {
         // ✅ Store token + user separately
         localStorage.setItem("token", data.user.token);
-        // localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem(
           "avatarUrl",
           data.user.avatarUrl || "https://placehold.co/100x100?text=User"
@@ -56,7 +54,7 @@ const LoginPage = () => {
         notifySuccess("Login Successful!");
 
         // ✅ Navigate based on role
-        if (data.user?.role) {
+        if (user?.role) {
           navigate(`/main/${data.user.role}`);
         } else {
           navigate("/"); // fallback
