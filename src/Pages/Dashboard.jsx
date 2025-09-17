@@ -38,10 +38,10 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <button className="bg-green-600 px-6 py-3 rounded-lg font-medium hover:bg-green-500 hover:scale-105 transition">
-              Post a Job
+              <Link to={`/register/client`}>Post a Job</Link>
             </button>
             <button className="border border-green-500 px-6 py-3 rounded-lg hover:bg-green-600 hover:text-white hover:scale-105 transition">
-              Become a Provider
+              <Link to={`/register/provider`}>Become a Provider</Link>
             </button>
           </div>
         </div>
