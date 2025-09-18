@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import socket from "./socket";
+// import socket from "./socket";
 import ToastProvider from "./Components/ToastProvider";
 import { notifySuccess } from "./utils/toast";
 import userContext from "./contexts/userContext";
@@ -37,21 +37,21 @@ const App = () => {
     fetchUser();
   }, [token]); // re-run if token changes
   // ✅ Listen for new messages
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    socket.on("receiveMessage", (msg) => {
-      if (msg.receiver === user._id) {
-        if (window.location.pathname !== "/chat") {
-          notifySuccess(`💬 New Message: ${msg.text}`);
-        }
-      }
-    });
+  //   socket.on("receiveMessage", (msg) => {
+  //     if (msg.receiver === user._id) {
+  //       if (window.location.pathname !== "/chat") {
+  //         notifySuccess(`💬 New Message: ${msg.text}`);
+  //       }
+  //     }
+  //   });
 
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, [user]);
+  //   return () => {
+  //     socket.off("receiveMessage");
+  //   };
+  // }, [user]);
 
   return (
     <userContext.Provider value={{ user, setUser }}>

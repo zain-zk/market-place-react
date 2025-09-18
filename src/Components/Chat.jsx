@@ -1,15 +1,17 @@
+// src/pages/ChatPage.jsx
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
 import axios from "axios";
 import { motion } from "framer-motion";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import userContext from "../contexts/userContext";
 
-const socket = io("https://market-place-react.vercel.app");
+let socket; // 👈 single instance per page
 
 const ChatPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { otherUserId, bidId } = useParams();
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -17,6 +19,34 @@ const ChatPage = () => {
   const { user } = useContext(userContext);
   const role = user?.role || "client";
 
+  // ✅ Connect socket only when on /chat
+  useEffect(() => {
+    if (!user) return;
+
+    if (location.pathname.startsWith("/chat")) {
+      socket = io(import.meta.env.VITE_BACKEND_URL, {
+        transports: ["websocket"],
+      });
+
+      // Listen for incoming messages
+      socket.on("receiveMessage", (msg) => {
+        if (msg.receiver === user._id) {
+          setMessages((prev) => [...prev, msg]);
+        }
+      });
+    }
+
+    // ✅ Cleanup when leaving /chat
+    return () => {
+      if (socket) {
+        socket.off("receiveMessage");
+        socket.disconnect();
+        socket = null;
+      }
+    };
+  }, [user, location.pathname]);
+
+  // ✅ Fetch chat history
   useEffect(() => {
     async function fetchHistory() {
       try {
@@ -30,18 +60,14 @@ const ChatPage = () => {
         console.error("❌ Error fetching chat history", err);
       }
     }
-
     if (user && otherUserId) fetchHistory();
-  }, [user, otherUserId]);
+  }, [user, otherUserId, bidId]);
 
+  // ✅ Send message
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-
-    if (!user?._id || !otherUserId) {
-      console.error("❌ Missing sender or receiver ID");
-      return;
-    }
+    if (!user?._id || !otherUserId) return;
 
     const msg = {
       sender: user._id,
@@ -52,8 +78,7 @@ const ChatPage = () => {
 
     try {
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/messages`, msg);
-
-      socket.emit("sendMessage", msg); // send saved message
+      if (socket) socket.emit("sendMessage", msg);
       setMessages((prev) => [...prev, msg]);
       setNewMessage("");
     } catch (err) {
@@ -61,6 +86,7 @@ const ChatPage = () => {
     }
   };
 
+  // ✅ Scroll down on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
