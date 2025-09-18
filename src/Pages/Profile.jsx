@@ -99,19 +99,21 @@ const ProfilePage = () => {
                   : "translate-x-0 opacity-100 scale-100"
               }`}
             >
-              {/* Avatar */}
-              <div className="relative flex flex-col items-center md:items-start">
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-green-700 to-green-900 border-4 border-green-500 flex items-center justify-center text-4xl md:text-5xl font-bold text-green-300 shadow-xl overflow-hidden">
+              {/* Avatar */}{" "}
+              <div className="relative flex flex-col items-center">
+                {" "}
+                <div className="w-40 h-40 sm:mt-20 rounded-full bg-gradient-to-br from-green-700 to-green-900 border-4 border-green-500 flex items-center justify-center text-5xl font-bold text-green-300 shadow-xl overflow-hidden">
+                  {" "}
                   {user.name
                     .split(" ")
                     .map((n) => n[0])
-                    .join("")}
-                </div>
-                <span className="absolute -bottom-4 md:static md:mt-3 bg-green-500 text-black text-xs font-bold px-4 py-1 rounded-full shadow-md">
-                  {user.role === "client" ? "Client 👤" : "Service 🛠"}
-                </span>
+                    .join("")}{" "}
+                </div>{" "}
+                <span className="absolute -bottom-4 bg-green-500 text-black text-xs font-bold px-4 py-1 rounded-full shadow-md">
+                  {" "}
+                  {user.role === "client" ? "Client 👤" : "Service 🛠"}{" "}
+                </span>{" "}
               </div>
-
               {/* Info + Upload */}
               <div className="flex flex-col md:flex-row md:flex-1 w-full md:space-x-10 mt-6 md:mt-0">
                 <div className="flex-1 space-y-3 md:space-y-5 text-gray-400">
