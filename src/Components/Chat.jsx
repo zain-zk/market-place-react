@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { io } from "socket.io-client";
 import userContext from "../contexts/userContext";
 
-let socket; // 👈 single instance per page
+let socket; // keep a single instance
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const ChatPage = () => {
   const { user } = useContext(userContext);
   const role = user?.role || "client";
 
-  // ✅ Connect socket only when on /chat
+  // Connect to socket only on /chat
   useEffect(() => {
     if (!user) return;
 
@@ -28,7 +28,6 @@ const ChatPage = () => {
         transports: ["websocket"],
       });
 
-      // Listen for incoming messages
       socket.on("receiveMessage", (msg) => {
         if (msg.receiver === user._id) {
           setMessages((prev) => [...prev, msg]);
@@ -36,7 +35,6 @@ const ChatPage = () => {
       });
     }
 
-    // ✅ Cleanup when leaving /chat
     return () => {
       if (socket) {
         socket.off("receiveMessage");
@@ -46,7 +44,7 @@ const ChatPage = () => {
     };
   }, [user, location.pathname]);
 
-  // ✅ Fetch chat history
+  // Fetch chat history
   useEffect(() => {
     async function fetchHistory() {
       try {
@@ -60,14 +58,22 @@ const ChatPage = () => {
         console.error("❌ Error fetching chat history", err);
       }
     }
-    if (user && otherUserId) fetchHistory();
+    if (user && otherUserId && bidId) fetchHistory();
   }, [user, otherUserId, bidId]);
 
-  // ✅ Send message
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-    if (!user?._id || !otherUserId) return;
+
+    if (!user?._id || !otherUserId) {
+      console.error("❌ Missing sender or receiver ID");
+      return;
+    }
+
+    if (!bidId) {
+      console.error("❌ Missing bidId");
+      return;
+    }
 
     const msg = {
       sender: user._id,
@@ -86,7 +92,6 @@ const ChatPage = () => {
     }
   };
 
-  // ✅ Scroll down on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -116,10 +121,7 @@ const ChatPage = () => {
         {messages.map((msg, index) => (
           <motion.div
             key={index}
-            initial={{
-              opacity: 0,
-              x: msg.sender === user._id ? 50 : -50,
-            }}
+            initial={{ opacity: 0, x: msg.sender === user._id ? 50 : -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
             className={`flex ${
