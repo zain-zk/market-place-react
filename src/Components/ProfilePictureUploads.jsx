@@ -8,6 +8,7 @@ export default function ProfilePictureUpload({
   setProfilePic,
   userId,
 }) {
+  const { user } = useContext(userContext);
   const [uploading, setUploading] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -59,7 +60,6 @@ export default function ProfilePictureUpload({
 
       // Revert to old avatar if exists
       // const user = JSON.parse(localStorage.getItem("user"));
-      const { user } = useContext(userContext);
       if (user?.avatarUrl) {
         setProfilePic(user.avatarUrl);
       }
