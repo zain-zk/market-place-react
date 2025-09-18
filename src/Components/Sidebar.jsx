@@ -135,7 +135,7 @@ const Sidebar = ({ role }) => {
 
       {/* Mobile / Tablet Topbar */}
       {/* Mobile / Tablet Topbar */}
-      <div className="lg:hidden fixed top-0 left-0 w-full bg-gradient-to-r from-[#011508] via-[#002f00] to-[#093406] text-gray-200 shadow-md z-50">
+      <div className="lg:hidden fixed top-0 left-0 w-full loginbglight bg-gradient-to-r from-[#011508] via-[#002f00] to-[#093406] text-gray-200 shadow-md z-50">
         {/* Top bar with avatar + title + theme toggle + menu button */}
         <div className="flex items-center justify-between px-4 py-3">
           {/* Left: Avatar + Title */}
