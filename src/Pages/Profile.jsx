@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Components/Sidebar";
 import {
@@ -28,7 +27,6 @@ const ProfilePage = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  // ✅ Fetch Profile (backend gets userId from token)
   useEffect(() => {
     async function fetchProfile() {
       try {
@@ -46,7 +44,7 @@ const ProfilePage = () => {
 
         if (data.avatarUrl) {
           setProfilePic(data.avatarUrl);
-          localStorage.setItem("avatarUrl", data.avatarUrl); // ✅ cache avatar
+          localStorage.setItem("avatarUrl", data.avatarUrl);
         }
       } catch (err) {
         console.error("Error fetching profile", err);
@@ -56,7 +54,6 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
-  // ✅ Handle Update
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -80,45 +77,45 @@ const ProfilePage = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-black via-green-950 to-black text-black overflow-hidden flex-1 lg:ml-64 pt-20 lg:pt-2 p-2">
-      {/* Sidebar with profile picture */}
+      {/* Sidebar */}
       <Sidebar role={user.role || "client"} profilePic={profilePic} />
 
       {/* Main */}
       <main className="flex-1 flex flex-col relative overflow-hidden">
         {/* Header */}
         <header className="w-full bg-green-900/20 border-b p-5 border-green-800 shadow-lg">
-          <h1 className="text-3xl font-extrabold text-green-400 tracking-wide">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-green-400 tracking-wide">
             My Profile
           </h1>
         </header>
 
-        <section className="flex-1 flex items-center justify-center p-8 relative">
-          <div className="w-full max-w-5xl flex relative overflow-hidden">
+        <section className="flex-1 flex items-center justify-center p-4 md:p-8 relative">
+          <div className="w-full max-w-5xl flex flex-col md:flex-row relative overflow-hidden">
             {/* Profile Card */}
             <div
-              className={`flex-1 bg-green-900/20 backdrop-blur-lg border border-green-800 rounded-2xl shadow-2xl p-10 md:flex md:gap-12 items-center transition-transform duration-500 ${
+              className={`flex-1 bg-green-900/20 backdrop-blur-lg border border-green-800 rounded-2xl shadow-2xl p-6 md:p-10 flex flex-col md:flex-row md:gap-12 items-center md:items-start transition-transform duration-500 ${
                 isEditing
                   ? "-translate-x-1/3 opacity-70 scale-95"
                   : "translate-x-0 opacity-100 scale-100"
               }`}
             >
               {/* Avatar */}
-              <div className="relative flex flex-col items-center">
-                <div className="w-40 h-40 rounded-full bg-gradient-to-br from-green-700 to-green-900 border-4 border-green-500 flex items-center justify-center text-5xl font-bold text-green-300 shadow-xl overflow-hidden">
+              <div className="relative flex flex-col items-center md:items-start">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-green-700 to-green-900 border-4 border-green-500 flex items-center justify-center text-4xl md:text-5xl font-bold text-green-300 shadow-xl overflow-hidden">
                   {user.name
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
                 </div>
-                <span className="absolute -bottom-4 bg-green-500 text-black text-xs font-bold px-4 py-1 rounded-full shadow-md">
+                <span className="absolute -bottom-4 md:static md:mt-3 bg-green-500 text-black text-xs font-bold px-4 py-1 rounded-full shadow-md">
                   {user.role === "client" ? "Client 👤" : "Service 🛠"}
                 </span>
               </div>
 
-              {/* Info */}
-              <div className="flex flex-row">
-                <div className="flex-1 mt-12 md:mt-0 space-y-5 text-gray-400">
-                  <h2 className="text-4xl font-semibold text-green-400">
+              {/* Info + Upload */}
+              <div className="flex flex-col md:flex-row md:flex-1 w-full md:space-x-10 mt-6 md:mt-0">
+                <div className="flex-1 space-y-3 md:space-y-5 text-gray-400">
+                  <h2 className="text-2xl md:text-4xl font-semibold text-green-400">
                     {user.name}
                   </h2>
                   <p className="flex items-center gap-3">
@@ -147,14 +144,13 @@ const ProfilePage = () => {
                   </p>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="mt-6 flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-black px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:scale-105"
+                    className="mt-4 md:mt-6 flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-black px-4 py-2 md:px-6 md:py-3 rounded-xl font-semibold transition-all shadow-md hover:scale-105"
                   >
                     <FiEdit /> Edit Profile
                   </button>
                 </div>
 
-                {/* ✅ Upload picture */}
-                <div className="text-white flex ml-40 items-center">
+                <div className="text-white flex justify-center md:justify-end mt-6 md:mt-0">
                   <ProfilePictureUpload
                     userId={user._id}
                     profilePic={profilePic}
@@ -166,16 +162,16 @@ const ProfilePage = () => {
 
             {/* Sliding Edit Form */}
             <div
-              className={`absolute right-0 top-0 h-full w-full max-w-2xl bg-green-950 border-1 border-green-700 p-8 rounded-l-2xl shadow-2xl transform transition-transform duration-500 ${
+              className={`absolute right-0 top-0 h-full w-full max-w-2xl bg-green-950 border-1 border-green-700 p-6 md:p-8 rounded-l-2xl shadow-2xl transform transition-transform duration-500 ${
                 isEditing ? "translate-x-0" : "translate-x-full"
               }`}
             >
-              <h2 className="text-2xl font-bold text-green-400 mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-green-400 mb-6">
                 Edit Profile
               </h2>
               <form
                 onSubmit={handleUpdate}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
               >
                 <input
                   type="text"
@@ -233,17 +229,17 @@ const ProfilePage = () => {
                   className="p-3 rounded-lg bg-black border border-green-700 text-white"
                 />
 
-                <div className="col-span-2 flex justify-end gap-4 mt-6">
+                <div className="col-span-1 md:col-span-2 flex justify-end gap-4 mt-4 md:mt-6">
                   <button
                     type="button"
                     onClick={() => setIsEditing(false)}
-                    className="px-6 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-semibold"
+                    className="px-4 md:px-6 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-semibold"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black font-semibold"
+                    className="px-4 md:px-6 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black font-semibold"
                   >
                     Save Changes
                   </button>
