@@ -152,7 +152,7 @@ const ProfilePage = () => {
                   </button>
                 </div>
 
-                <div className="text-white flex justify-center md:justify-end mt-6 md:mt-0">
+                <div className="text-white flex justify-center md:justify-end mt-6 sm:mr-40  md:mt-10">
                   <ProfilePictureUpload
                     userId={user._id}
                     profilePic={profilePic}
