@@ -8,6 +8,7 @@ import EditRequirement from "../Components/EditRequirement";
 import DropdownMenu from "../Components/DropdownMenu";
 import { notifySuccess, notifyError, notifyInfo } from "../utils/toast";
 import userContext from "../contexts/userContext";
+import axiosInstance from "../utils/axiosInstance";
 
 const RequirementsPage = () => {
   const { user } = useContext(userContext);
@@ -25,9 +26,7 @@ const RequirementsPage = () => {
     const fetchRequirements = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/requirements/my/${clientId}`
-        );
+        const res = await axiosInstance.get(`/requirements/my/${clientId}`);
         setRequirements(res.data);
       } catch (err) {
         notifyError("Error loading your posted requirements");
@@ -40,10 +39,8 @@ const RequirementsPage = () => {
 
   const handleViewBids = async (requirementId) => {
     try {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/bids/requirements/${requirementId}/bids`
+      const res = await axiosInstance.get(
+        `/bids/requirements/${requirementId}/bids`
       );
       setSelectedBids(res.data);
       setIsBidsOpen(true);
@@ -55,10 +52,9 @@ const RequirementsPage = () => {
 
   const handleUpdateStatus = async (bidId, newStatus) => {
     try {
-      const res = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/bids/${bidId}/status`,
-        { status: newStatus }
-      );
+      const res = await axiosInstance.put(`/bids/${bidId}/status`, {
+        status: newStatus,
+      });
       setSelectedBids((prevBids) =>
         prevBids.map((b) =>
           b._id === bidId ? { ...b, status: res.data.status } : b
@@ -77,16 +73,13 @@ const RequirementsPage = () => {
     if (!window.confirm("⚠️ Delete this requirement?")) return;
 
     try {
-      await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/requirements/${reqId}`
-      );
+      await axiosInstance.delete(`/requirements/${reqId}`);
 
       // remove the requirement from UI
       setRequirements((prev) => prev.filter((r) => r._id !== reqId));
 
       // ✅ also remove all bids linked to this requirement
       setBids((prev) => prev.filter((b) => b.requirement !== reqId));
-
       notifySuccess("Requirement and its bids deleted");
     } catch (err) {
       console.error("FAILED TO DELETE REQUIREMENT", err);

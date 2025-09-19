@@ -1,6 +1,7 @@
 import { FaSave } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { notifySuccess } from "../utils/toast";
+import axiosInstance from "../utils/axiosInstance";
 
 const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
   const [title, setTitle] = useState(req.title);
@@ -19,22 +20,15 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/requirements/${req._id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title,
-            description,
-            price,
-            location,
-          }),
-        }
-      );
+      const res = await axiosInstance.put(`/requirements/${req._id}`, {
+        title,
+        description,
+        price,
+        location,
+      });
 
-      if (!res.ok) throw new Error("Failed to update");
-      const updated = await res.json();
+      if (!res.status === 200) throw new Error("Failed to update");
+      const updated = res.data;
 
       onSave(req._id, updated);
       notifySuccess("Requirement Updated Successfully");

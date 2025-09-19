@@ -6,6 +6,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { io } from "socket.io-client";
 import userContext from "../contexts/userContext";
+import axiosInstance from "../utils/axiosInstance";
 
 let socket; // keep a single instance
 
@@ -48,10 +49,8 @@ const ChatPage = () => {
   useEffect(() => {
     async function fetchHistory() {
       try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/messages/${
-            user._id
-          }/${otherUserId}/${bidId}`
+        const { data } = await axiosInstance.get(
+          `/messages/${user._id}/${otherUserId}/${bidId}`
         );
         setMessages(data);
       } catch (err) {
@@ -83,7 +82,7 @@ const ChatPage = () => {
     };
 
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/messages`, msg);
+      await axiosInstance.post("/messages", msg);
       if (socket) socket.emit("sendMessage", msg);
       setMessages((prev) => [...prev, msg]);
       setNewMessage("");

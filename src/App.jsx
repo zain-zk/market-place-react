@@ -6,6 +6,7 @@ import { notifySuccess } from "./utils/toast";
 import userContext from "./contexts/userContext";
 import axios from "axios";
 import { AppRoutes } from "./routes";
+import axiosInstance from "./utils/axiosInstance";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -16,14 +17,11 @@ const App = () => {
     async function fetchUser() {
       try {
         if (!token) return;
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axiosInstance.get("/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (res.data) {
           setUser(res.data.user);
@@ -32,26 +30,9 @@ const App = () => {
         console.error("Error fetching user:", err);
       }
     }
-
     // call it immediately
     fetchUser();
   }, [token]); // re-run if token changes
-  // ✅ Listen for new messages
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   socket.on("receiveMessage", (msg) => {
-  //     if (msg.receiver === user._id) {
-  //       if (window.location.pathname !== "/chat") {
-  //         notifySuccess(`💬 New Message: ${msg.text}`);
-  //       }
-  //     }
-  //   });
-
-  //   return () => {
-  //     socket.off("receiveMessage");
-  //   };
-  // }, [user]);
 
   return (
     <userContext.Provider value={{ user, setUser }}>

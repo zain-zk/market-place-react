@@ -65,7 +65,6 @@ export default function Register() {
       );
 
       const data = await res.json();
-      console.log("Server Response", data);
       if (password !== confirmPassword) {
         notifyError("Password and Confirm Password dosn't Match");
         return;

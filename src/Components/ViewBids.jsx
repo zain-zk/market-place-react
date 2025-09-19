@@ -1,5 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes, FaUser, FaClock, FaDollarSign, FaFileAlt, FaCheck, FaBan, FaComments } from "react-icons/fa";
+import {
+  FaTimes,
+  FaUser,
+  FaClock,
+  FaDollarSign,
+  FaFileAlt,
+  FaCheck,
+  FaBan,
+  FaComments,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const statusColors = {
@@ -50,7 +59,9 @@ const ViewBidsModal = ({ isOpen, onClose, bids, onUpdateStatus }) => {
             {/* Content */}
             <div className="p-6 max-h-[70vh] overflow-y-auto space-y-4">
               {bids.length === 0 ? (
-                <p className="text-gray-400 text-center">No bids placed yet 😔</p>
+                <p className="text-gray-400 text-center">
+                  No bids placed yet 😔
+                </p>
               ) : (
                 bids.map((bid) => (
                   <div
@@ -66,7 +77,9 @@ const ViewBidsModal = ({ isOpen, onClose, bids, onUpdateStatus }) => {
                         {bid.provider?.name || "Unknown Provider"}
                       </h3>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[bid.status]}`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          statusColors[bid.status]
+                        }`}
                       >
                         {bid.status}
                       </span>
@@ -125,16 +138,18 @@ const ViewBidsModal = ({ isOpen, onClose, bids, onUpdateStatus }) => {
                     {/* ✅ Chat Button for Accepted Bids */}
                     {bid.status === "Accepted" && (
                       <div className="mt-3">
-                       <button
-  onClick={() => navigate(`/chat/${bid.provider?._id}/${bid._id}`)}
-  className="w-full flex items-center justify-center gap-2 
-             bg-blue-600 hover:bg-blue-700 
-             text-white font-medium py-2 px-4 rounded-lg 
-             transition shadow-md hover:shadow-blue-500/30"
->
-  <FaComments /> Chat with {bid.provider?.name || "Provider"}
-</button>
-
+                        <button
+                          onClick={() =>
+                            navigate(`/chat/${bid.provider?._id}/${bid._id}`)
+                          }
+                          className="w-full flex items-center justify-center gap-2 
+                              bg-blue-600 hover:bg-blue-700 
+                              text-white font-medium py-2 px-4 rounded-lg 
+                              transition shadow-md hover:shadow-blue-500/30"
+                        >
+                          <FaComments /> Chat with{" "}
+                          {bid.provider?.name || "Provider"}
+                        </button>
                       </div>
                     )}
                   </div>

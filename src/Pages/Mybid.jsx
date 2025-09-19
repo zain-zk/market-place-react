@@ -11,11 +11,12 @@ import {
 } from "react-icons/fa";
 import { MdOutlineDateRange, MdChat } from "react-icons/md";
 import { notifyError, notifyInfo, notifySuccess } from "../utils/toast";
+import axiosInstance from "../utils/axiosInstance";
 import userContext from "../contexts/userContext";
 
 const MyBidsPage = () => {
-  const [myBids, setMyBids] = useState([]);
   const { user } = useContext(userContext);
+  const [myBids, setMyBids] = useState([]);
   const providerId = user?._id || user?.id;
   const role = user?.role || "service-provider";
 
@@ -28,26 +29,20 @@ const MyBidsPage = () => {
   useEffect(() => {
     const fetchBids = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/bids/my-bids`,
-          {
-            params: { provider: providerId },
-          }
-        );
+        const res = await axiosInstance.get("/bids/my-bids", {
+          params: { provider: providerId },
+        });
         setMyBids(res.data);
       } catch (err) {
         console.error("Error fetching bids:", err);
       }
     };
-
     fetchBids();
   }, [providerId]);
 
   const handleWithdraw = async (bidId) => {
     try {
-      const res = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/bids/${bidId}`
-      );
+      const res = await axiosInstance.delete(`/bids/${bidId}`);
       console.log("Bid deleted:", res.data);
       setMyBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
       notifySuccess("Bid withdrawn successfully ✅");

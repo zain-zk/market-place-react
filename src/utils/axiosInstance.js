@@ -1,7 +1,7 @@
 // src/utils/axiosInstance.js
 import axios from "axios";
-import { use, useContext } from "react";
 import userContext from "../contexts/userContext";
+import { useContext } from "react";
 
 const axiosInstance = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`,
@@ -15,10 +15,10 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Try to get token from localStorage
     let token = localStorage.getItem("token");
-    const user = useContext(userContext);
 
     // Fallback: get from stored user object
     if (!token) {
+      const user = useContext(userContext);
       token = user?.token;
     }
 

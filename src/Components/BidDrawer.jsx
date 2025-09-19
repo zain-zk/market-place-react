@@ -5,6 +5,7 @@ import { notifySuccess } from "../utils/toast";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import userContext from "../contexts/userContext";
+import axiosInstance from "../utils/axiosInstance";
 
 const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
   if (!isOpen) return null;
@@ -25,10 +26,8 @@ const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
     };
 
     try {
-      const response = await axios.post(
-        ` ${import.meta.env.VITE_BACKEND_URL}/api/bids`,
-        bidData
-      );
+      const response = await axiosInstance.post("/bids", bidData);
+
       onSubmit(response.data); // send back to parent
       {
         notifySuccess("Bid placed successfully!");

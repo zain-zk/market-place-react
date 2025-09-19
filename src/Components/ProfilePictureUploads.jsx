@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { notifyError, notifySuccess } from "../utils/toast";
 import userContext from "../contexts/userContext";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function ProfilePictureUpload({
   profilePic,
@@ -25,16 +26,12 @@ export default function ProfilePictureUpload({
     try {
       setUploading(true);
 
-      const { data } = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/avatar`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const { data } = await axiosInstance.put("/users/avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       // ✅ Use backend Cloudinary URL
       setProfilePic(data.avatarUrl);

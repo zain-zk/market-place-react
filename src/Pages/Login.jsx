@@ -41,7 +41,6 @@ const LoginPage = () => {
       );
 
       const data = await res.json();
-      console.log("Login Response:", data);
 
       if (res.ok) {
         // ✅ Store token + user separately
