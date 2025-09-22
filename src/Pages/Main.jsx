@@ -131,6 +131,11 @@ const MainPage = ({ role: propRole }) => {
     }
   };
 
+  const handleBidSubmit = (bid) => {
+    console.log(`Bid of PKR ${bid} placed on:`, selectedTask);
+    // TODO: send bid + taskId to backend API
+  };
+
   return (
     <div className="flex min-h-screen  bg-black text-white">
       {/* Sidebar */}
@@ -362,6 +367,7 @@ const MainPage = ({ role: propRole }) => {
             <BidDrawer
               isOpen={isDrawerOpen}
               onClose={() => setIsDrawerOpen(false)}
+              onSubmit={""}
               selectedTask={selectedTask}
             />
           </div>
