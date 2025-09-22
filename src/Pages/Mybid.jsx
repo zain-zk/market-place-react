@@ -43,7 +43,6 @@ const MyBidsPage = () => {
   const handleWithdraw = async (bidId) => {
     try {
       const res = await axiosInstance.delete(`/bids/${bidId}`);
-      console.log("Bid deleted:", res.data);
       setMyBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
       notifySuccess("Bid withdrawn successfully ✅");
     } catch (error) {
@@ -61,7 +60,6 @@ const MyBidsPage = () => {
 
       <main className="flex-1 p-10   bg-gradient-to-br from-black to-green-950">
         <h1 className="text-3xl font-bold mb-8 text-green-400">My Bids 📑</h1>
-
         {myBids.length === 0 ? (
           <p className="text-gray-400">No bids yet.</p>
         ) : (
@@ -76,7 +74,6 @@ const MyBidsPage = () => {
                   <h2 className="text-2xl font-bold text-green-300">
                     {bid.requirement?.title || "Untitled Task"}
                   </h2>
-
                   <p className="text-gray-300 text-sm flex items-center gap-2">
                     <FaUserTie className="text-green-400" />
                     <span className="font-semibold text-white">
