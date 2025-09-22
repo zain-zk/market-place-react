@@ -13,6 +13,7 @@ import Sidebar from "../Components/Sidebar";
 import BidDrawer from "../Components/BidDrawer";
 import { notifyError, notifyInfo, notifySuccess } from "../utils/toast";
 import userContext from "../contexts/userContext";
+import axiosInstance from "../utils/axiosInstance";
 
 const MainPage = ({ role: propRole }) => {
   const navigate = useNavigate();
@@ -51,11 +52,10 @@ const MainPage = ({ role: propRole }) => {
   const fetchRequirements = async () => {
     try {
       setLoadingTasks(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/requirements`
-      );
-      const data = await res.json();
-      if (res.ok) {
+      const res = await axiosInstance.get("/requirements");
+
+      const data = res.data;
+      if (res.status === 200) {
         setRequirements(data);
       } else {
         console.error("Error fetching requirements:", data.message);
@@ -97,23 +97,20 @@ const MainPage = ({ role: propRole }) => {
 
     try {
       setLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/requirements`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            client: userId,
-            title,
-            description,
-            price,
-            location,
-          }),
-        }
-      );
+      const res = await axiosInstance.post("/requirements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client: userId,
+          title,
+          description,
+          price,
+          location,
+        }),
+      });
 
-      const data = await res.json();
-      if (res.ok) {
+      const data = res.data;
+      if (res.status === 200) {
         notifySuccess("✅ Requirement posted successfully!");
         setTitle("");
         setDescription("");
@@ -132,7 +129,7 @@ const MainPage = ({ role: propRole }) => {
   };
 
   const handleBidSubmit = (bid) => {
-    console.log(`Bid of PKR ${bid} placed on:`, selectedTask);
+    // console.log(`Bid of PKR ${bid} placed on:`, selectedTask);
     // TODO: send bid + taskId to backend API
   };
 
@@ -367,7 +364,7 @@ const MainPage = ({ role: propRole }) => {
             <BidDrawer
               isOpen={isDrawerOpen}
               onClose={() => setIsDrawerOpen(false)}
-              onSubmit={""}
+              onSubmit={handleBidSubmit}
               selectedTask={selectedTask}
             />
           </div>
