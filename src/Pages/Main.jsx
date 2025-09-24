@@ -53,7 +53,6 @@ const MainPage = ({ role: propRole }) => {
     try {
       setLoadingTasks(true);
       const res = await axiosInstance.get("/requirements");
-
       const data = res.data;
       if (res.status === 200) {
         setRequirements(data);
@@ -97,17 +96,19 @@ const MainPage = ({ role: propRole }) => {
 
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/requirements", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const res = await axiosInstance.post(
+        "/requirements",
+        {
           client: userId,
           title,
           description,
           price,
           location,
-        }),
-      });
+        }, // this is the request body
+        {
+          headers: { "Content-Type": "application/json" }, // optional; axios sets JSON by default
+        }
+      );
 
       const data = res.data;
       if (res.status === 200) {
