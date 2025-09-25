@@ -10,6 +10,8 @@ import Mybid from "./Pages/Mybid";
 import ChatPage from "./Components/Chat";
 import { Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./Components/PrivateRoutes";
+import DashboardMain from "./Pages/DashboardMain";
+import JobDetailsPage from "./Components/ViewBids";
 
 export const AppRoutes = () => {
   return (
@@ -42,6 +44,26 @@ export const AppRoutes = () => {
         }
       />
       <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute
+          // allowedRoles={"provider"}
+          >
+            <DashboardMain role="" />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/requirements/:reqId/jobdetails"
+        element={
+          // <PrivateRoute
+          // allowedRoles={"provider"}
+          // >
+          <JobDetailsPage />
+          // {/* </PrivateRoute> */}
+        }
+      />
+      <Route
         path="/postedtasks"
         element={
           <PrivateRoute>
@@ -58,7 +80,7 @@ export const AppRoutes = () => {
         }
       />
       <Route
-        path="/my-bids"
+        path="//my-bids"
         element={
           <PrivateRoute>
             <Mybid />

@@ -1,236 +1,142 @@
-import React, { useState, useEffect } from "react";
-import {
-  FaUserAlt,
-  FaBriefcase,
-  FaSignOutAlt,
-  FaTasks,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
-import { MdPostAdd, MdWork } from "react-icons/md";
+// src/components/Navbar.jsx
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { FaSignOutAlt, FaUserAlt } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { notifySuccess } from "../utils/toast";
 import ThemeLight from "./ThemeLight";
+import userContext from "../contexts/userContext";
 
-const Sidebar = ({ role }) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const { user } = useContext(userContext);
+
   const [avatar, setAvatar] = useState(
     localStorage.getItem("avatarUrl") ||
       "https://placehold.co/100x100?text=User"
   );
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || "User"
+  );
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("avatarUrl");
-    setAvatar("https://placehold.co/100x100?text=User");
     localStorage.removeItem("token");
+    setAvatar("https://placehold.co/100x100?text=User");
     navigate("/");
     notifySuccess("Logout Successfully");
+    setIsOpen(false);
   };
 
-  const isActive = (path) =>
-    location.pathname === path
-      ? "bg-green-900 text-black"
-      : "hover:bg-green-900 hover:text-white";
-
+  // Update avatar & username on login
   useEffect(() => {
     const updateAvatar = () => {
-      const updatedAvatar =
+      setAvatar(
         localStorage.getItem("avatarUrl") ||
-        "https://placehold.co/100x100?text=User";
-      setAvatar(updatedAvatar);
+          "https://placehold.co/100x100?text=User"
+      );
+      setUsername(localStorage.getItem("username") || "User");
     };
-
-    updateAvatar();
     window.addEventListener("avatarUpdated", updateAvatar);
     window.addEventListener("loginSuccess", updateAvatar);
-
     return () => {
       window.removeEventListener("avatarUpdated", updateAvatar);
       window.removeEventListener("loginSuccess", updateAvatar);
     };
   }, []);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isActive = (path) =>
+    location.pathname === path
+      ? "text-emerald-400 font-semibold"
+      : "text-gray-300 hover:text-emerald-400";
+
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed top-0 left-0 h-screen w-64 loginbglight bg-gradient-to-r from-[#011508] via-[#002f00] to-[#093406] flex-col p-6 text-gray-200 shadow-2xl">
-        <div className="ml-5 flex gap-3 flex-row ">
-          <div className="mb-10 mt-5 flex flex-col items-center">
-            <div className="flex flex-col items-center mb-6">
-              <img
-                src={avatar}
-                alt="Profile"
-                className="w-full aspect-square h-full rounded-full object-cover border-2 border-green-500"
-              />
-            </div>
-            <h2 className="text-3xl  font-bold  sidebar tracking-wide">
-              Talent Hub
-            </h2>
-          </div>
-          <div>
-            <ThemeLight />
-          </div>
-        </div>
+    <header className="w-full bg-black/50 backdrop-blur-lg border-b border-emerald-800/40 fixed top-0 left-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="text-xl sm:text-2xl font-bold text-emerald-400">
+          FixItNow
+        </Link>
 
-        <nav className="flex flex-col gap-3 flex-grow">
-          <Link
-            to="/profile"
-            className={`flex items-center gap-3 px-4 py-3 sidebar rounded-lg transition-all ${isActive(
-              "/profile"
-            )}`}
-          >
-            <FaUserAlt /> Profile
-          </Link>
+        {/* Right nav */}
+        <nav className="flex items-center gap-6">
+          <ThemeLight />
 
-          {role === "client" ? (
+          {user.role === "client" && (
             <>
-              <Link
-                to="/main/client"
-                className={`flex items-center gap-3 px-4 py-3 sidebar rounded-lg transition-all ${isActive(
-                  "/main/client"
-                )}`}
-              >
-                <MdPostAdd /> Post Requirement
+              <Link to="/dashboard" className={isActive("/dashboard")}>
+                Dashboard
               </Link>
-              <Link
-                to="/postedtasks"
-                className={`flex items-center gap-3 sidebar  px-4 py-3 rounded-lg transition-all ${isActive(
-                  "/postedtasks"
-                )}`}
-              >
-                <FaTasks /> My Posted Tasks
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/main/provider"
-                className={`flex items-center gap-3 px-4 py-3 sidebar rounded-lg transition-all ${isActive(
-                  "/main/provider"
-                )}`}
-              >
-                <MdWork /> Browse Projects
-              </Link>
-              <Link
-                to="/my-bids"
-                className={`flex items-center gap-3 sidebar px-4 py-3 rounded-lg transition-all ${isActive(
-                  "/my-bids"
-                )}`}
-              >
-                <FaBriefcase /> My Bids
+              <Link to="/main/client" className={isActive("/client/post")}>
+                Post a Job
               </Link>
             </>
           )}
 
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3  sidebar mt-auto cursor-pointer rounded-lg transition-all hover:bg-red-600 hover:text-white"
-          >
-            <FaSignOutAlt /> Logout
-          </button>
-        </nav>
-      </aside>
+          {user.role === "provider" && (
+            <>
+              <Link to="/dashboard" className={isActive("/provider/dashboard")}>
+                Provider Dashboard
+              </Link>
+              <Link
+                to="/main/provider"
+                className={isActive("/job-requirements")}
+              >
+                Job Requirements
+              </Link>
+            </>
+          )}
 
-      {/* Mobile / Tablet Topbar */}
-      {/* Mobile / Tablet Topbar */}
-      <div className="lg:hidden fixed top-0 left-0 w-full loginbglight bg-gradient-to-r from-[#011508] via-[#002f00] to-[#093406] text-gray-200 shadow-md z-50">
-        {/* Top bar with avatar + title + theme toggle + menu button */}
-        <div className="flex items-center justify-between px-4 py-3">
-          {/* Left: Avatar + Title */}
-          <div className="flex items-center gap-3">
-            <img
-              src={avatar}
-              alt="Profile"
-              className="w-10 h-10 rounded-full border-2 border-green-500"
-            />
-            <h2 className="text-xl font-bold sidebar">Talent Hub</h2>
-          </div>
-
-          {/* Right: Theme toggle + menu button */}
-          <div className="flex items-center gap-3">
-            <ThemeLight />
+          {/* Avatar dropdown */}
+          <div className="relative" ref={dropdownRef}>
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="text-3xl focus:outline-none"
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-8 h-8 cursor-pointer rounded-full bg-emerald-700 flex items-center justify-center text-white font-bold focus:outline-none"
             >
-              {menuOpen ? <FaTimes /> : <FaBars />}
+              {user.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </button>
-          </div>
-        </div>
 
-        {/* Slide-down menu */}
-        {menuOpen && (
-          <div className="flex flex-col loginbglight bg-gradient-to-r from-[#011508] via-[#002f00] to-[#093406] px-4 pb-4 gap-3">
-            <Link
-              to="/profile"
-              onClick={() => setMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive(
-                "/profile"
-              )}`}
-            >
-              <FaUserAlt /> Profile
-            </Link>
-
-            {role === "client" ? (
-              <>
+            {isOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white text-gray-700 rounded-xl shadow-lg ring-1 ring-black/5">
+                <div className="px-4 py-2 border-b">
+                  <p className="text-sm font-semibold truncate">{user.name}</p>
+                </div>
                 <Link
-                  to="/main/client"
-                  onClick={() => setMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive(
-                    "/main/client"
-                  )}`}
+                  to="/profile"
+                  onClick={() => setIsOpen(false)}
+                  className="flex justify-between items-center px-4 py-2 text-sm hover:bg-gray-100 rounded-t-xl"
                 >
-                  <MdPostAdd /> Post Requirement
+                  Profile <FaUserAlt className="text-gray-500 text-xs" />
                 </Link>
-                <Link
-                  to="/postedtasks"
-                  onClick={() => setMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive(
-                    "/postedtasks"
-                  )}`}
+                <button
+                  onClick={handleLogout}
+                  className="flex justify-between items-center w-full px-4 py-2 text-sm transition-colors hover:bg-red-500 hover:text-white rounded-b-xl"
                 >
-                  <FaTasks /> My Posted Tasks
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/main/provider"
-                  onClick={() => setMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive(
-                    "/main/provider"
-                  )}`}
-                >
-                  <MdWork /> Browse Projects
-                </Link>
-                <Link
-                  to="/my-bids"
-                  onClick={() => setMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive(
-                    "/my-bids"
-                  )}`}
-                >
-                  <FaBriefcase /> My Bids
-                </Link>
-              </>
+                  Logout <FaSignOutAlt className="text-xs" />
+                </button>
+              </div>
             )}
-
-            <button
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
-              }}
-              className="flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg transition-all hover:bg-red-600 hover:text-white"
-            >
-              <FaSignOutAlt /> Logout
-            </button>
           </div>
-        )}
+        </nav>
       </div>
-    </>
+    </header>
   );
 };
 
-export default Sidebar;
+export default Navbar;

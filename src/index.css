@@ -5,162 +5,132 @@
   font-family: "Times New Roman", Times, serif;
 }
 
-.loginbgdark {
-  background: linear-gradient(to right, #06140f, #0b1f17, #060b08);
-}
+/* Dark login gradient */
+/* .loginbgdark {
+  background: linear-gradient(to right, #0a0f24, #0c122b, #0a0f24);
+} */
 
 /* -------- Global themes -------- */
-
-/* Define default (dark) CSS variables */
 :root {
-  --bg-main: #000000;
-  --bg-alt: #0f172a;
+  --bg-main: #0a0f24; /* dark blue */
+  --bg-alt: #141b3a; /* slightly lighter blue */
   --bg-dark: #000000;
 
-  --bg-hero-from: #000000;
-  --bg-hero-via: #14532d;
-  --bg-hero-to: #000000;
+  --bg-hero-from: #0a0f24;
+  --bg-hero-via: #141b3a;
+  --bg-hero-to: #0a0f24;
 
-  --bg-how-from: #14532d;
-  --bg-how-via: #000000;
-  --bg-how-to: #14532d;
+  --bg-how-from: #141b3a;
+  --bg-how-via: #0a0f24;
+  --bg-how-to: #141b3a;
 
-  --text-main: #f9fafb;
-  --text-light: #9ca3af;
-  --text-accent: #080a09;
+  --text-main: #f1f5f9; /* off-white */
+  --text-light: #cbd5e1; /* light gray */
+  --text-accent: #3b82f6; /* blue accent */
   --text-inverse: #000000;
 
-  --border-main: #374151;
-  --border-accent: #34d399;
+  --border-main: #334155; /* dark border */
+  --border-accent: #3b82f6; /* blue accent */
 }
 
-/* Light theme overrides for hard-coded Tailwind classes */
+/* -------- Light theme (white + blue) -------- */
 body.light-theme {
   background-color: #ffffff !important;
-  color: #1f2937 !important;
+  color: #1e293b !important;
 }
 
-/* Navbar, sections */
-body.light-theme .bg-black {
-  background: linear-gradient(
-    to right,
-    #549157,
-    #46864f
-  ) !important; /* cards */
-}
+/* Navbar / sections in light theme */
+/* body.light-theme .bg-black {
+  background: linear-gradient(to right, #3b82f6, #2563eb) !important;
+} */
 
 body.light-theme .bg-green-950 {
-  background-color: #f9fafb !important; /* cards */
+  background-color: #f1f5f9 !important;
 }
-body.light-theme .login {
+
+/* body.light-theme .login {
   background-color: white !important;
 }
+
 body.light-theme .sidebar {
-  color: rgb(0, 0, 0) !important;
-}
-body.light-theme .textmain {
-  color: rgb(17, 183, 45) !important;
-}
-body.light-theme .loginbglight {
-  background: linear-gradient(
-    to right,
-    #549157,
-    #46864f
-  ) !important; /* cards */
-}
-body.light-theme .bgcard {
+  color: #1e293b !important;
+} */
+
+/* body.light-theme .loginbglight {
+  background: linear-gradient(to right, #3b82f6, #2563eb) !important;
+} */
+
+/* body.light-theme .bgcard {
   background: linear-gradient(
     to bottom right,
-    /* same as 'to-br' */ rgba(255, 255, 255, 0.8),
-    /* gray-900 with 80% opacity */ rgba(176, 176, 180, 0.6)
-      /* black with 60% opacity */
-  ) !important; /* cards */
-}
+    rgba(255, 255, 255, 0.9),
+    rgba(226, 232, 240, 0.6)
+  ) !important;
+} */
 
 body.light-theme .text-gray-400,
 body.light-theme .text-gray-500 {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
-body.light-theme .text-white,
+
+/* body.light-theme .text-white,
 body.light-theme .text-gray-300 {
-  color: #000000 !important;
-}
-body.light-theme input {
-  background-color: transparent !important;
-}
+  color: #1e293b !important;
+} */
+
+body.light-theme input,
 body.light-theme textarea {
   background-color: transparent !important;
 }
-body.light-theme .loginput {
+
+/* body.light-theme .loginput {
   background-color: transparent !important;
-  color: white !important;
-}
-body.light-theme .serviceinput {
+  color: #1e293b !important;
+} */
+
+/* body.light-theme .serviceinput {
   background-color: transparent !important;
-  color: black !important;
-}
-body.light-theme .text-green-400,
-body.light-theme .text-green-500 {
-  color: #00ff80 !important;
-}
+  color: #1e293b !important;
+} */
+
 body.light-theme .border-green-800 {
-  border-color: #0c5c18 !important;
+  border-color: #3b82f6 !important;
 }
 
-/* Buttons */
+/* Buttons – blue */
 body.light-theme .bg-green-600 {
-  background-color: #059669 !important;
+  background-color: #2563eb !important; /* primary blue */
 }
 body.light-theme .hover\:bg-green-500:hover {
-  background-color: #16a34a !important;
+  background-color: #1d4ed8 !important; /* darker blue */
 }
 
-/* Gradient overrides (cover all variants used) */
+/* Gradient overrides */
 body.light-theme .from-black {
-  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-from: #3b82f6 !important;
   --tw-gradient-stops: var(--tw-gradient-from),
-    var(--tw-gradient-to, rgba(217, 7, 7, 0)) !important;
+    var(--tw-gradient-to, rgba(0, 0, 0, 0)) !important;
 }
 body.light-theme .via-green-950 {
-  --tw-gradient-via: #e0f2f1 !important;
+  --tw-gradient-via: #93c5fd !important;
 }
 body.light-theme .to-black {
   --tw-gradient-to: #ffffff !important;
 }
 
 body.light-theme .from-green-950 {
-  --tw-gradient-from: #f9fafb !important;
+  --tw-gradient-from: #ffffff !important;
   --tw-gradient-stops: var(--tw-gradient-from),
     var(--tw-gradient-to, rgb(255 255 255 / 0)) !important;
 }
 body.light-theme .via-black {
-  --tw-gradient-via: #394e4c !important;
+  --tw-gradient-via: #bfdbfe !important;
 }
 body.light-theme .to-green-950 {
-  --tw-gradient-to: #ffffff !important;
+  --tw-gradient-to: #3b82f6 !important;
 }
 
-/* -------- Apply variables globally -------- */
-/* body {
-  @apply min-h-screen;
-  background-color: var(--bg-main);
-  color: var(--text-main);
-} */
-
-/* -------- Utility classes using variables -------- */
-/* .bg-main       { background-color: var(--bg-main); }
-.bg-alt        { background-color: var(--bg-alt); }
-.bg-dark       { background-color: var(--bg-dark); }
-
-.text-main     { color: var(--text-main); }
-.text-light    { color: var(--text-light); }
-.text-accent   { color: var(--text-accent); }
-.text-inverse  { color: var(--text-inverse); }
-
-.border-main   { border-color: var(--border-main); }
-.border-accent { border-color: var(--border-accent); } */
-
-/* Gradient helpers */
+/* Gradients helpers */
 .bg-hero {
   background-image: linear-gradient(
     to right,
@@ -186,21 +156,7 @@ body.light-theme .to-green-950 {
   padding: 1rem;
 }
 
-/* -------- 3D Utilities -------- */
-.perspective {
-  perspective: 1000px;
-}
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-.backface-hidden {
-  backface-visibility: hidden;
-}
-.rotate-y-180 {
-  transform: rotateY(180deg);
-}
-
-/* -------- Input number spinner removal -------- */
+/* Inputs etc. same as before … */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -208,4 +164,13 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.recharts-wrapper *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button {
+  cursor: pointer;
 }

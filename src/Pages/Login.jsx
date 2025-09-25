@@ -16,7 +16,7 @@ const LoginPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       if (user?.role) {
-        navigate(`/main/${user.role}`, { replace: true });
+        navigate(`/dashboard`, { replace: true });
       } else {
         navigate("/login", { replace: true });
       }
