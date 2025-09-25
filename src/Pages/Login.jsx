@@ -7,22 +7,24 @@ import userContext from "../contexts/userContext.js";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [name, setname] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
   const navigate = useNavigate();
   const { user, setUser } = useContext(userContext);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       if (user?.role) {
-        navigate(`/dashboard`, { replace: true });
+        navigate(`/main/${user.role}`, { replace: true });
       } else {
         navigate("/login", { replace: true });
       }
     }
   }, [navigate, user?.role]);
-  // ✅ Updated handleLogin (cleaner + role navigation)
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -36,27 +38,25 @@ const LoginPage = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }), // ✅ no name
+          body: JSON.stringify({ email, password }),
         }
       );
 
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ Store token + user separately
         localStorage.setItem("token", data.user.token);
         localStorage.setItem(
           "avatarUrl",
           data.user.avatarUrl || "https://placehold.co/100x100?text=User"
         );
-        setUser(data.user); // Update context
+        setUser(data.user);
         notifySuccess("Login Successful!");
 
-        // ✅ Navigate based on role
-        if (user?.role) {
-          navigate(`/main/${data.user.role}`);
+        if (data.user.role) {
+          navigate(`/dashboard/${data.user.role}`);
         } else {
-          navigate("/"); // fallback
+          navigate("/");
         }
       } else {
         notifyInfo("Error: " + data.message);
@@ -68,62 +68,57 @@ const LoginPage = () => {
   };
 
   return (
-    <div
-      className="flex min-h-screen  justify-center items-center loginbglight loginbgdark    
-     "
-    >
-      {/* Card */}
+    <div className="flex min-h-screen justify-center items-center bg-black">
       <div
         className="
-        login
           flex flex-col md:flex-row 
-          bg-[#0b1114] rounded-2xl shadow-2xl overflow-hidden 
-          w-full max-w-5xl  border border-emerald-900/30 
+          bg-black rounded-2xl shadow-2xl overflow-hidden 
+          w-full max-w-5xl border border-gray-800
         "
       >
         {/* Left - Form */}
-        <div className="w-full md:w-1/2 p-6 md:p-10  flex flex-col justify-center text-white">
-          <h2 className="text-3xl font-bold mb-2 text-emerald-400">
+        <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center text-white">
+          <h2 className="text-3xl font-bold mb-2 text-blue-500">
             Welcome Back
           </h2>
-          <p className="text-gray-400 mb-8 ">
+          <p className="text-gray-400 mb-8">
             Sign in to continue your journey with FixItNow.
           </p>
 
           <form className="space-y-5" onSubmit={handleLogin}>
             {/* Email */}
-            <div className="flex items-center bg-[#0b1512] px-4 py-3 rounded-lg border border-emerald-900/30">
-              <FaEnvelope className="text-emerald-400 mr-3" />
+            <div className="flex items-center  px-4 py-3 rounded-lg border border-gray-700">
+              <FaEnvelope className="text-blue-500 mr-3" />
               <input
                 type="email"
                 placeholder="Enter your email"
                 autoComplete="off"
-                className="bg-transparent loginput outline-none text-sm w-full text-white placeholder-gray-500"
+                className="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             {/* Username */}
-            <div className="flex items-center bg-[#0b1512] px-4 py-3 rounded-lg border border-emerald-900/30">
-              <FaUser className="text-emerald-400 mr-3" />
+            <div className="flex items-center px-4 py-3 rounded-lg border border-gray-700">
+              <FaUser className="text-blue-500 mr-3" />
               <input
                 type="text"
                 placeholder="Username"
                 autoComplete="off"
-                className="bg-transparent loginput outline-none text-sm w-full text-white placeholder-gray-500"
+                className="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400"
                 value={name}
-                onChange={(e) => setname(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
             {/* Password */}
-            <div className="flex items-center bg-[#0b1512] px-4 py-3 rounded-lg border border-emerald-900/30">
-              <FaLock className="text-emerald-400 mr-3" />
+            <div className="flex items-center  px-4 py-3 rounded-lg border border-gray-700">
+              <FaLock className="text-blue-500 mr-3" />
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="bg-transparent loginput outline-none text-sm w-full text-white placeholder-gray-500"
+                className="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -131,45 +126,40 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-400 hover:text-emerald-400 ml-2"
+                className="text-gray-400 hover:text-blue-500 ml-2"
                 aria-label="Toggle password visibility"
               >
                 {showPassword ? "🙈" : "👁️"}
               </button>
             </div>
 
-            {/* Checkbox */}
-            {/* <label className="flex items-center text-sm text-gray-400  select-none">
-              <input
-                type="checkbox"
-                required
-                className="mr-2 accent-emerald-500 "
-              />
-              I agree to the platform accessing my information
-            </label> */}
-
-            {/* Button */}
             <button
               type="submit"
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold transition"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition"
             >
               Login
             </button>
           </form>
-
-          <p className="text-gray-400 text-sm mt-6 ">
-            Don’t have an account?{" "}
-            <Link
-              to={"/register-role"}
-              className="text-emerald-400 hover:underline"
-            >
-              Register
-            </Link>
-          </p>
+          <div className="flex gap-20">
+            <p className="text-gray-400 text-sm mt-6">
+              Don’t have an account?{" "}
+              <Link
+                to={"/register-role"}
+                className="text-blue-500 hover:underline"
+              >
+                Register
+              </Link>
+            </p>
+            <p className="text-gray-400 text-sm mt-6">
+              <Link to={"/"} className="text-blue-500 hover:underline">
+                ⬅Go Back to the Home Page
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Right - Illustration */}
-        <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#07130d] to-[#0e1f17] justify-center items-center">
+        <div className="hidden md:flex md:w-1/2 bg-black justify-center items-center">
           <img
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"
             alt="Service professional at work"

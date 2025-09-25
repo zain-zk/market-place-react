@@ -60,14 +60,14 @@ const Navbar = () => {
 
   const isActive = (path) =>
     location.pathname === path
-      ? "text-emerald-400 font-semibold"
-      : "text-gray-300 hover:text-emerald-400";
+      ? "text-blue-400 font-semibold"
+      : "text-gray-300 hover:text-blue-400";
 
   return (
-    <header className="w-full bg-black/50 backdrop-blur-lg border-b border-emerald-800/40 fixed top-0 left-0 z-50">
+    <header className="w-full bg-black/70 backdrop-blur-lg border-b border-blue-800/40 fixed top-0 left-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-xl sm:text-2xl font-bold text-emerald-400">
+        <Link to="/" className="text-xl sm:text-2xl font-bold text-blue-400">
           FixItNow
         </Link>
 
@@ -77,7 +77,7 @@ const Navbar = () => {
 
           {user.role === "client" && (
             <>
-              <Link to="/dashboard" className={isActive("/dashboard")}>
+              <Link to="/dashboard/client" className={isActive("/dashboard")}>
                 Dashboard
               </Link>
               <Link to="/main/client" className={isActive("/client/post")}>
@@ -88,7 +88,10 @@ const Navbar = () => {
 
           {user.role === "provider" && (
             <>
-              <Link to="/dashboard" className={isActive("/provider/dashboard")}>
+              <Link
+                to="/dashboard/provider"
+                className={isActive("/provider/dashboard")}
+              >
                 Provider Dashboard
               </Link>
               <Link
@@ -104,7 +107,7 @@ const Navbar = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="w-8 h-8 cursor-pointer rounded-full bg-emerald-700 flex items-center justify-center text-white font-bold focus:outline-none"
+              className="w-8 h-8 cursor-pointer rounded-full bg-blue-700 flex items-center justify-center text-white font-bold focus:outline-none"
             >
               {user.name
                 .split(" ")
@@ -126,7 +129,7 @@ const Navbar = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex justify-between items-center w-full px-4 py-2 text-sm transition-colors hover:bg-red-500 hover:text-white rounded-b-xl"
+                  className="flex justify-between items-center w-full px-4 py-2 text-sm transition-colors hover:bg-blue-500 hover:text-white rounded-b-xl"
                 >
                   Logout <FaSignOutAlt className="text-xs" />
                 </button>

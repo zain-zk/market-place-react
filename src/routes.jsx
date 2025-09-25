@@ -44,12 +44,22 @@ export const AppRoutes = () => {
         }
       />
       <Route
-        path="/dashboard"
+        path="/dashboard/client"
         element={
           <PrivateRoute
           // allowedRoles={"provider"}
           >
-            <DashboardMain role="" />
+            <DashboardMain role="client" />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/dashboard/provider"
+        element={
+          <PrivateRoute
+          // allowedRoles={"provider"}
+          >
+            <DashboardMain role="provider" />
           </PrivateRoute>
         }
       />

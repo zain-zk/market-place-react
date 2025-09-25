@@ -18,7 +18,7 @@ import axiosInstance from "../utils/axiosInstance";
 function Card({ children, className = "" }) {
   return (
     <div
-      className={`rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition ${className}`}
+      className={`rounded-2xl bg-black border border-blue-800/40 shadow-sm hover:shadow-md transition ${className}`}
     >
       {children}
     </div>
@@ -31,7 +31,7 @@ function Button({ children, onClick, className = "" }) {
   return (
     <button
       onClick={onClick}
-      className={`px-5 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium shadow hover:shadow-lg hover:scale-[1.02] transition ${className}`}
+      className={`px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-medium shadow hover:shadow-lg hover:scale-[1.02] transition ${className}`}
     >
       {children}
     </button>
@@ -52,10 +52,6 @@ const ClientDashboard = () => {
     if (!user?._id) return;
     const fetchData = async () => {
       try {
-        // adjust endpoints to your backend routes
-        // const tasksRes = await axiosInstance.get(`/requirements`);
-        // setTasks(tasksRes.data || []);
-
         const reqRes = await axiosInstance.get(`/requirements/my/${user._id}`);
         setRequirements(reqRes.data || []);
       } catch (err) {
@@ -81,21 +77,21 @@ const ClientDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen text-gray-600">
+      <div className="flex items-center justify-center h-screen text-gray-300 bg-black">
         Loading dashboard…
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex min-h-screen bg-black text-gray-200">
       {/* Sidebar */}
       <Sidebar />
 
       {/* CLIENT DASHBOARD */}
       {user.role === "client" && (
         <div className="flex-1 p-8 space-y-10">
-          <h1 className="text-4xl font-extrabold mt-14 text-gray-800">
+          <h1 className="text-4xl flex justify-center font-extrabold mt-14 text-white">
             {user.name || "Client"}'s Dashboard
           </h1>
 
@@ -103,10 +99,10 @@ const ClientDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardContent className="flex items-center gap-4">
-                <FaTasks className="text-blue-500 text-3xl" />
+                <FaTasks className="text-blue-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-500">Active Tasks</h2>
-                  <p className="text-3xl font-extrabold text-blue-600 mt-1">
+                  <h2 className="text-sm text-gray-400">Active Tasks</h2>
+                  <p className="text-3xl font-extrabold text-blue-400 mt-1">
                     {taskSummary.active}
                   </p>
                 </div>
@@ -114,10 +110,10 @@ const ClientDashboard = () => {
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4">
-                <FaCheckCircle className="text-green-500 text-3xl" />
+                <FaCheckCircle className="text-green-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-500">Completed</h2>
-                  <p className="text-3xl font-extrabold text-green-600 mt-1">
+                  <h2 className="text-sm text-gray-400">Completed</h2>
+                  <p className="text-3xl font-extrabold text-green-400 mt-1">
                     {taskSummary.completed}
                   </p>
                 </div>
@@ -125,10 +121,10 @@ const ClientDashboard = () => {
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4">
-                <FaClipboardList className="text-yellow-500 text-3xl" />
+                <FaClipboardList className="text-yellow-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-500">Requirements</h2>
-                  <p className="text-3xl font-extrabold text-yellow-600 mt-1">
+                  <h2 className="text-sm text-gray-400">Requirements</h2>
+                  <p className="text-3xl font-extrabold text-yellow-400 mt-1">
                     {taskSummary.requirements}
                   </p>
                 </div>
@@ -139,7 +135,7 @@ const ClientDashboard = () => {
           {/* Progress Chart */}
           <Card>
             <CardContent>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 Task Progress Overview
               </h2>
               <div className="h-80">
@@ -171,20 +167,20 @@ const ClientDashboard = () => {
           {/* Latest Requirements Section */}
           <Card>
             <CardContent>
-              <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              <h2 className="text-2xl font-semibold text-white mb-6">
                 Latest Job's Posted
               </h2>
               <div className="space-y-4">
                 {requirements.slice(0, 3).map((req) => (
                   <div
                     key={req._id}
-                    className="bg-gray-100 p-5 rounded-xl flex justify-between items-center"
+                    className="bg-blue-950/40 p-5 rounded-xl flex justify-between items-center"
                   >
                     <div>
-                      <p className="font-semibold text-lg text-gray-700">
+                      <p className="font-semibold text-lg text-white">
                         {req.title}
                       </p>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-400">
                         Posted on{" "}
                         {new Date(req.createdAt).toLocaleDateString("en-US")}
                       </span>
@@ -216,19 +212,18 @@ const ClientDashboard = () => {
       {/* PROVIDER DASHBOARD */}
       {user.role === "provider" && (
         <div className="flex-1 p-8 space-y-10">
-          <h1 className="text-4xl font-extrabold mt-14 text-gray-800">
+          <h1 className="text-4xl font-extrabold mt-14 text-white">
             {user.name || "Provider"}'s Dashboard
           </h1>
 
-          {/* you can tweak provider dashboard content here */}
+          {/* same cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* same cards */}
             <Card>
               <CardContent className="flex items-center gap-4">
-                <FaTasks className="text-blue-500 text-3xl" />
+                <FaTasks className="text-blue-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-500">Active Tasks</h2>
-                  <p className="text-3xl font-extrabold text-blue-600 mt-1">
+                  <h2 className="text-sm text-gray-400">Active Tasks</h2>
+                  <p className="text-3xl font-extrabold text-blue-400 mt-1">
                     {taskSummary.active}
                   </p>
                 </div>
@@ -236,10 +231,10 @@ const ClientDashboard = () => {
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4">
-                <FaCheckCircle className="text-green-500 text-3xl" />
+                <FaCheckCircle className="text-green-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-500">Completed</h2>
-                  <p className="text-3xl font-extrabold text-green-600 mt-1">
+                  <h2 className="text-sm text-gray-400">Completed</h2>
+                  <p className="text-3xl font-extrabold text-green-400 mt-1">
                     {taskSummary.completed}
                   </p>
                 </div>
@@ -247,10 +242,10 @@ const ClientDashboard = () => {
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4">
-                <FaClipboardList className="text-yellow-500 text-3xl" />
+                <FaClipboardList className="text-yellow-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-500">Requirements</h2>
-                  <p className="text-3xl font-extrabold text-yellow-600 mt-1">
+                  <h2 className="text-sm text-gray-400">Requirements</h2>
+                  <p className="text-3xl font-extrabold text-yellow-400 mt-1">
                     {taskSummary.requirements}
                   </p>
                 </div>
@@ -261,7 +256,7 @@ const ClientDashboard = () => {
           {/* Chart */}
           <Card>
             <CardContent>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 Task Progress Overview
               </h2>
               <div className="h-80">

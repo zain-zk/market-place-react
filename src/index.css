@@ -5,29 +5,15 @@
   font-family: "Times New Roman", Times, serif;
 }
 
-/* Dark login gradient */
-/* .loginbgdark {
-  background: linear-gradient(to right, #0a0f24, #0c122b, #0a0f24);
-} */
-
-/* -------- Global themes -------- */
+/* -------- Dark theme variables -------- */
 :root {
   --bg-main: #0a0f24; /* dark blue */
   --bg-alt: #141b3a; /* slightly lighter blue */
   --bg-dark: #000000;
 
-  --bg-hero-from: #0a0f24;
-  --bg-hero-via: #141b3a;
-  --bg-hero-to: #0a0f24;
-
-  --bg-how-from: #141b3a;
-  --bg-how-via: #0a0f24;
-  --bg-how-to: #141b3a;
-
   --text-main: #f1f5f9; /* off-white */
   --text-light: #cbd5e1; /* light gray */
   --text-accent: #3b82f6; /* blue accent */
-  --text-inverse: #000000;
 
   --border-main: #334155; /* dark border */
   --border-accent: #3b82f6; /* blue accent */
@@ -36,80 +22,65 @@
 /* -------- Light theme (white + blue) -------- */
 body.light-theme {
   background-color: #ffffff !important;
-  color: #1e293b !important;
+  color: #1e293b !important; /* slate-800 */
 }
 
-/* Navbar / sections in light theme */
-/* body.light-theme .bg-black {
-  background: linear-gradient(to right, #3b82f6, #2563eb) !important;
-} */
-
+/* Navbar/sections in light theme */
+body.light-theme header,
+body.light-theme .bg-black,
 body.light-theme .bg-green-950 {
-  background-color: #f1f5f9 !important;
-}
-
-/* body.light-theme .login {
-  background-color: white !important;
-}
-
-body.light-theme .sidebar {
+  background-color: #ffffff !important;
   color: #1e293b !important;
-} */
-
-/* body.light-theme .loginbglight {
-  background: linear-gradient(to right, #3b82f6, #2563eb) !important;
-} */
-
-/* body.light-theme .bgcard {
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0.9),
-    rgba(226, 232, 240, 0.6)
-  ) !important;
-} */
-
-body.light-theme .text-gray-400,
-body.light-theme .text-gray-500 {
-  color: #1e293b !important;
-}
-
-/* body.light-theme .text-white,
-body.light-theme .text-gray-300 {
-  color: #1e293b !important;
-} */
-
-body.light-theme input,
-body.light-theme textarea {
-  background-color: transparent !important;
-}
-
-/* body.light-theme .loginput {
-  background-color: transparent !important;
-  color: #1e293b !important;
-} */
-
-/* body.light-theme .serviceinput {
-  background-color: transparent !important;
-  color: #1e293b !important;
-} */
-
-body.light-theme .border-green-800 {
   border-color: #3b82f6 !important;
 }
 
-/* Buttons – blue */
-body.light-theme .bg-green-600 {
+/* Text colors in light theme */
+body.light-theme .text-gray-400,
+body.light-theme .text-gray-500,
+body.light-theme .text-white,
+body.light-theme .text-gray-300 {
+  color: #1e293b !important; /* black-ish text */
+}
+
+body.light-theme a {
+  color: #2563eb !important; /* link blue */
+}
+body.light-theme a:hover {
+  color: #1d4ed8 !important;
+}
+
+/* Avatar initials text */
+body.light-theme .bg-emerald-700 {
+  background-color: #2563eb !important; /* blue button */
+}
+
+/* Buttons in light theme – blue */
+body.light-theme .bg-green-600,
+body.light-theme button.bg-green-600 {
   background-color: #2563eb !important; /* primary blue */
+  color: #ffffff !important;
 }
 body.light-theme .hover\:bg-green-500:hover {
   background-color: #1d4ed8 !important; /* darker blue */
 }
 
-/* Gradient overrides */
+/* Card backgrounds */
+body.light-theme .card,
+body.light-theme .bgcard {
+  background-color: #ffffff !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Inputs transparent but dark text */
+body.light-theme input,
+body.light-theme textarea {
+  background-color: transparent !important;
+  color: #1e293b !important;
+}
+
+/* Gradients helpers override for light */
 body.light-theme .from-black {
   --tw-gradient-from: #3b82f6 !important;
-  --tw-gradient-stops: var(--tw-gradient-from),
-    var(--tw-gradient-to, rgba(0, 0, 0, 0)) !important;
 }
 body.light-theme .via-green-950 {
   --tw-gradient-via: #93c5fd !important;
@@ -118,59 +89,7 @@ body.light-theme .to-black {
   --tw-gradient-to: #ffffff !important;
 }
 
-body.light-theme .from-green-950 {
-  --tw-gradient-from: #ffffff !important;
-  --tw-gradient-stops: var(--tw-gradient-from),
-    var(--tw-gradient-to, rgb(255 255 255 / 0)) !important;
-}
-body.light-theme .via-black {
-  --tw-gradient-via: #bfdbfe !important;
-}
-body.light-theme .to-green-950 {
-  --tw-gradient-to: #3b82f6 !important;
-}
-
-/* Gradients helpers */
-.bg-hero {
-  background-image: linear-gradient(
-    to right,
-    var(--bg-hero-from),
-    var(--bg-hero-via),
-    var(--bg-hero-to)
-  );
-}
-.bg-how {
-  background-image: linear-gradient(
-    to right,
-    var(--bg-how-from),
-    var(--bg-how-via),
-    var(--bg-how-to)
-  );
-}
-
-/* Card helper */
-.card {
-  background-color: var(--bg-alt);
-  border: 1px solid var(--border-main);
-  border-radius: 1rem;
-  padding: 1rem;
-}
-
-/* Inputs etc. same as before … */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-.recharts-wrapper *:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
+/* Misc */
 button {
   cursor: pointer;
 }
