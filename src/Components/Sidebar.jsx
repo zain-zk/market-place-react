@@ -92,7 +92,7 @@ const Navbar = () => {
                 to="/dashboard/provider"
                 className={isActive("/provider/dashboard")}
               >
-                Provider Dashboard
+                Dashboard
               </Link>
               <Link
                 to="/main/provider"

@@ -18,7 +18,7 @@ const LoginPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       if (user?.role) {
-        navigate(`/main/${user.role}`, { replace: true });
+        navigate(`/dashboard/${user.role}`, { replace: true });
       } else {
         navigate("/login", { replace: true });
       }
@@ -87,7 +87,7 @@ const LoginPage = () => {
 
           <form className="space-y-5" onSubmit={handleLogin}>
             {/* Email */}
-            <div className="flex items-center  px-4 py-3 rounded-lg border border-gray-700">
+            <div className="flex items-center bg-[#111]  px-4 py-3 rounded-lg border border-gray-700">
               <FaEnvelope className="text-blue-500 mr-3" />
               <input
                 type="email"
@@ -100,7 +100,7 @@ const LoginPage = () => {
             </div>
 
             {/* Username */}
-            <div className="flex items-center px-4 py-3 rounded-lg border border-gray-700">
+            <div className="flex items-center bg-[#111] px-4 py-3 rounded-lg border border-gray-700">
               <FaUser className="text-blue-500 mr-3" />
               <input
                 type="text"
@@ -113,7 +113,7 @@ const LoginPage = () => {
             </div>
 
             {/* Password */}
-            <div className="flex items-center  px-4 py-3 rounded-lg border border-gray-700">
+            <div className="flex items-center bg-[#111]  px-4 py-3 rounded-lg border border-gray-700">
               <FaLock className="text-blue-500 mr-3" />
               <input
                 type={showPassword ? "text" : "password"}

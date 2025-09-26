@@ -167,17 +167,17 @@ export default function LandingPage() {
             <h3 className="font-semibold text-blue-500 mb-2">Quick Links</h3>
             <ul className="space-y-1">
               <li>
-                <a
-                  href="/register-role"
+                <Link
+                  to="/register-role"
                   className="hover:text-blue-500 transition"
                 >
                   Register
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/login" className="hover:text-blue-500 transition">
+                <Link to="/login" className="hover:text-blue-500 transition">
                   Login
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -185,15 +185,15 @@ export default function LandingPage() {
             <h3 className="font-semibold text-blue-500 mb-2">Contact Us</h3>
             <p className="text-gray-400 text-sm">support@fixitnow.com</p>
             <div className="flex justify-center md:justify-start mt-2 space-x-4">
-              <a href="#" className="hover:text-blue-500 transition">
+              <Link to="#" className="hover:text-blue-500 transition">
                 FB
-              </a>
-              <a href="#" className="hover:text-blue-500 transition">
+              </Link>
+              <Link to="#" className="hover:text-blue-500 transition">
                 TW
-              </a>
-              <a href="#" className="hover:text-blue-500 transition">
+              </Link>
+              <Link to="#" className="hover:text-blue-500 transition">
                 IG
-              </a>
+              </Link>
             </div>
           </div>
         </div>

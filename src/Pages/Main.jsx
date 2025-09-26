@@ -177,31 +177,32 @@ const MainPage = ({ role: propRole }) => {
           </div>
         ) : (
           // PROVIDER SIDE
-          <div>
-            <h1 className="text-3xl font-bold mb-6 text-blue-400 flex items-center gap-2">
-              Welcome, Service Provider <MdWork className="text-blue-300" />
+          <div className="flex flex-col items-center w-full px-4">
+            <h1 className="text-4xl font-bold mb-3 text-blue-400 flex items-center gap-2 text-center">
+              Explore Jobs Posted <MdWork className="text-blue-300" />
             </h1>
-            <p className="text-gray-300 mb-4">
-              Browse projects and place your bids to get started ✨
+            <p className="text-gray-300 mb-8 text-center text-lg">
+              Find tasks that match your skills and place your bids to get
+              started ✨
             </p>
-            {/* Search */}
-            <div className="max-w-xl mb-6">
+
+            <div className="w-full max-w-5xl mb-8">
               <div className="relative">
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search by profession, city or title..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-800/50 text-gray-200 border border-gray-600/30 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-800/50 text-gray-200 border border-gray-600/30 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-lg"
                 />
               </div>
             </div>
-            {/* City Filter */}
-            <div className="flex gap-2 mb-6 flex-wrap">
+
+            <div className="flex gap-2 mb-10 flex-wrap justify-center">
               <button
                 onClick={() => setSelectedCity("")}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   selectedCity === ""
                     ? "bg-blue-600 text-white"
                     : "bg-gray-700/50 text-gray-300 hover:bg-gray-600"
@@ -213,7 +214,7 @@ const MainPage = ({ role: propRole }) => {
                 <button
                   key={city}
                   onClick={() => setSelectedCity(city)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     selectedCity === city
                       ? "bg-blue-600 text-white"
                       : "bg-gray-700/50 text-gray-300 hover:bg-gray-600"
@@ -223,17 +224,18 @@ const MainPage = ({ role: propRole }) => {
                 </button>
               ))}
             </div>
+
             {/* Tasks */}
             {loadingTasks ? (
               <p className="text-gray-400">⏳ Loading tasks...</p>
             ) : filteredTasks.length > 0 ? (
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 w-full">
                 {filteredTasks.map((task) => (
                   <div
                     key={task._id}
-                    className="relative bg-gradient-to-br from-gray-900/80 to-black/60 backdrop-blur-xl 
-                      border border-blue-700/100 rounded-3xl p-8 hover:border-blue-500/50 
-                      hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1 transition"
+                    className="relative backdrop-blur-xl 
+              border border-blue-700/100 rounded-3xl p-8 hover:border-blue-500/50 
+              hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1 transition"
                   >
                     <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
                       {task.title} 📋
@@ -254,8 +256,8 @@ const MainPage = ({ role: propRole }) => {
                         setIsDrawerOpen(true);
                       }}
                       className="mt-5 w-full flex items-center justify-center gap-2
-                        bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold py-2.5 rounded-xl 
-                        hover:from-blue-500 hover:to-blue-400 hover:scale-[1.03] hover:shadow-lg transition-all"
+                             bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold py-2.5 rounded-xl 
+                             hover:from-blue-500 hover:to-blue-400 hover:scale-[1.03] hover:shadow-lg transition-all"
                     >
                       <FaGavel className="text-lg" /> Place Bid
                     </button>
@@ -265,15 +267,15 @@ const MainPage = ({ role: propRole }) => {
             ) : (
               <p className="text-gray-500">🙅‍♂️ No matching tasks found.</p>
             )}
-            <BidDrawer
-              isOpen={isDrawerOpen}
-              onClose={() => setIsDrawerOpen(false)}
-              onSubmit={() => {}}
-              selectedTask={selectedTask}
-            />
           </div>
         )}
       </main>
+      <BidDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSubmit={() => {}}
+        selectedTask={selectedTask}
+      />
     </div>
   );
 };

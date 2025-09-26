@@ -1,3 +1,4 @@
+// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Components/Sidebar";
 import {
@@ -69,90 +70,89 @@ const ProfilePage = () => {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-green-300">
+      <div className="flex items-center justify-center min-h-screen text-gray-300 bg-black">
         Loading profile...
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-black via-green-950 to-black text-black overflow-hidden flex-1 lg:ml-64 pt-20 lg:pt-2 p-2">
+    <div className="flex min-h-screen bg-black text-gray-200">
       {/* Sidebar */}
       <Sidebar role={user.role || "client"} profilePic={profilePic} />
 
-      {/* Main */}
+      {/* MAIN */}
       <main className="flex-1 flex flex-col relative overflow-hidden">
         {/* Header */}
-        <header className="w-full bg-green-900/20 border-b p-5 border-green-800 shadow-lg">
-          <h1 className="text-2xl md:text-3xl font-extrabold text-green-400 tracking-wide">
+        <header className="w-full bg-black  p-5  mt-14">
+          <h1 className="text-3xl font-extrabold text-blue-400 tracking-wide text-center">
             My Profile
           </h1>
         </header>
 
-        <section className="flex-1 flex items-center justify-center p-4 md:p-8 relative">
+        {/* Content */}
+        <section className="flex-1 flex items-center justify-center p relative">
           <div className="w-full max-w-5xl flex flex-col md:flex-row relative overflow-hidden">
             {/* Profile Card */}
             <div
-              className={`flex-1 bg-green-900/20 backdrop-blur-lg border border-green-800 rounded-2xl shadow-2xl p-6 md:p-10 flex flex-col md:flex-row md:gap-12 items-center md:items-start transition-transform duration-500 ${
+              className={`flex-1 bg-black border border-blue-800/40 rounded-2xl shadow-sm hover:shadow-md p-6 md:p-10 flex flex-col md:flex-row md:gap-12 items-center md:items-start transition-transform duration-500 ${
                 isEditing
                   ? "-translate-x-1/3 opacity-70 scale-95"
                   : "translate-x-0 opacity-100 scale-100"
               }`}
             >
-              {/* Avatar */}{" "}
-              <div className="relative flex flex-col items-center">
-                {" "}
-                <div className="w-40 h-40 sm:mt-20 rounded-full bg-gradient-to-br from-green-700 to-green-900 border-4 border-green-500 flex items-center justify-center text-5xl font-bold text-green-300 shadow-xl overflow-hidden">
-                  {" "}
+              {/* Avatar */}
+              <div className="relative mt-22 flex flex-col items-center">
+                <div className="w-40 h-40 rounded-full bg-gray-900 border-4 border-blue-500 flex items-center justify-center text-5xl font-bold text-blue-400 shadow overflow-hidden">
                   {user.name
                     .split(" ")
                     .map((n) => n[0])
-                    .join("")}{" "}
-                </div>{" "}
-                <span className="absolute -bottom-4 bg-green-500 text-black text-xs font-bold px-4 py-1 rounded-full shadow-md">
-                  {" "}
-                  {user.role === "client" ? "Client 👤" : "Service 🛠"}{" "}
-                </span>{" "}
+                    .join("")}
+                </div>
+                <span className="absolute -bottom-4 bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
+                  {user.role === "client" ? "Client 👤" : "Service 🛠"}
+                </span>
               </div>
+
               {/* Info + Upload */}
-              <div className="flex flex-col md:flex-row md:flex-1 w-full md:space-x-10 mt-6 md:mt-0">
-                <div className="flex-1 space-y-3 md:space-y-5 text-gray-400">
-                  <h2 className="text-2xl md:text-4xl font-semibold text-green-400">
+              <div className="flex flex-col md:flex-row md:flex-1 ml-7 w-full md:space-x-10 mt-6 md:mt-0">
+                <div className="flex-1 space-y-3 md:space-y-5 text-gray-300">
+                  <h2 className="text-2xl md:text-4xl font-semibold text-blue-400">
                     {user.name}
                   </h2>
                   <p className="flex items-center gap-3">
-                    <FiMail className="text-green-400 text-lg" />
+                    <FiMail className="text-blue-400 text-lg" />
                     {user.email}
                   </p>
                   <p className="flex items-center gap-3">
-                    <FiPhone className="text-green-400 text-lg" />
+                    <FiPhone className="text-blue-400 text-lg" />
                     {user.phone || "Not provided"}
                   </p>
                   <p className="flex items-center gap-3">
-                    <FiBriefcase className="text-green-400 text-lg" />
+                    <FiBriefcase className="text-blue-400 text-lg" />
                     {user.company || "No company"}
                   </p>
                   <p className="flex items-center gap-3">
-                    <FiAward className="text-green-400 text-lg" />
+                    <FiAward className="text-blue-400 text-lg" />
                     {user.skill || "No skills"} - {user.experience || "0 yrs"}
                   </p>
                   <p className="flex items-center gap-3">
-                    <FiMapPin className="text-green-400 text-lg" />
+                    <FiMapPin className="text-blue-400 text-lg" />
                     {user.location || "Unknown"}
                   </p>
                   <p className="flex items-center gap-3">
-                    <FiCalendar className="text-green-400 text-lg" />
+                    <FiCalendar className="text-blue-400 text-lg" />
                     Joined: {new Date(user.createdAt).toLocaleDateString()}
                   </p>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="mt-4 md:mt-6 flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-black px-4 py-2 md:px-6 md:py-3 rounded-xl font-semibold transition-all shadow-md hover:scale-105"
+                    className="mt-4 md:mt-6 flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow hover:shadow-lg hover:scale-[1.02] transition"
                   >
                     <FiEdit /> Edit Profile
                   </button>
                 </div>
 
-                <div className="text-white flex justify-center md:justify-end mt-6 sm:mr-40  md:mt-10">
+                <div className="flex justify-center md:justify-end mt-6 md:mt-10 mr-30">
                   <ProfilePictureUpload
                     userId={user._id}
                     profilePic={profilePic}
@@ -164,11 +164,11 @@ const ProfilePage = () => {
 
             {/* Sliding Edit Form */}
             <div
-              className={`absolute right-0 top-0 h-full w-full max-w-2xl bg-green-950 border-1 border-green-700 p-6 md:p-8 rounded-l-2xl shadow-2xl transform transition-transform duration-500 ${
+              className={`absolute right-0 top-0 h-full w-full max-w-2xl bg-black border border-blue-800/40 p-6 md:p-8 rounded-l-2xl shadow transform transition-transform duration-500 ${
                 isEditing ? "translate-x-0" : "translate-x-full"
               }`}
             >
-              <h2 className="text-xl md:text-2xl font-bold text-green-400 mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-blue-400 mb-6">
                 Edit Profile
               </h2>
               <form
@@ -180,21 +180,21 @@ const ProfilePage = () => {
                   placeholder="Full Name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
                 <input
                   type="text"
                   placeholder="Phone"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
                 <input
                   type="text"
@@ -203,14 +203,14 @@ const ProfilePage = () => {
                   onChange={(e) =>
                     setForm({ ...form, company: e.target.value })
                   }
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
                 <input
                   type="text"
                   placeholder="Skill"
                   value={form.skill}
                   onChange={(e) => setForm({ ...form, skill: e.target.value })}
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
                 <input
                   type="text"
@@ -219,7 +219,7 @@ const ProfilePage = () => {
                   onChange={(e) =>
                     setForm({ ...form, experience: e.target.value })
                   }
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
                 <input
                   type="text"
@@ -228,20 +228,20 @@ const ProfilePage = () => {
                   onChange={(e) =>
                     setForm({ ...form, location: e.target.value })
                   }
-                  className="p-3 rounded-lg bg-black border border-green-700 text-white"
+                  className="p-3 rounded-lg bg-gray-950 border border-blue-700 text-white"
                 />
 
                 <div className="col-span-1 md:col-span-2 flex justify-end gap-4 mt-4 md:mt-6">
                   <button
                     type="button"
                     onClick={() => setIsEditing(false)}
-                    className="px-4 md:px-6 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-semibold"
+                    className="px-4 md:px-6 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-semibold"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 md:px-6 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black font-semibold"
+                    className="px-4 md:px-6 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow hover:shadow-lg hover:scale-[1.02] transition"
                   >
                     Save Changes
                   </button>

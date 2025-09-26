@@ -39,7 +39,10 @@ body.light-theme .text-gray-400,
 body.light-theme .text-gray-500,
 body.light-theme .text-white,
 body.light-theme .text-gray-300 {
-  color: #1e293b !important; /* black-ish text */
+  color: #00274e !important; /* black-ish text */
+}
+body.light-theme .register {
+  color: #f5faff !important; /* black-ish text */
 }
 
 body.light-theme a {
@@ -58,7 +61,7 @@ body.light-theme .bg-emerald-700 {
 body.light-theme .bg-green-600,
 body.light-theme button.bg-green-600 {
   background-color: #2563eb !important; /* primary blue */
-  color: #ffffff !important;
+  color: #68677f !important;
 }
 body.light-theme .hover\:bg-green-500:hover {
   background-color: #1d4ed8 !important; /* darker blue */
@@ -92,4 +95,18 @@ body.light-theme .to-black {
 /* Misc */
 button {
   cursor: pointer;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.recharts-wrapper *:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }

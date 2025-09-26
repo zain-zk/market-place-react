@@ -13,6 +13,7 @@ import { FaClipboardList, FaTasks, FaCheckCircle } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import userContext from "../contexts/userContext";
 import axiosInstance from "../utils/axiosInstance";
+import { notifyError } from "../utils/toast";
 
 /* ---- Reusable UI ---- */
 function Card({ children, className = "" }) {
@@ -42,38 +43,101 @@ function Button({ children, onClick, className = "" }) {
 const ClientDashboard = () => {
   const navigate = useNavigate();
   const { user } = useContext(userContext);
+  const providerId = user?._id || user?.id;
 
   const [tasks, setTasks] = useState([]);
   const [requirements, setRequirements] = useState([]);
+  const [myBids, setMyBids] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // fetch tasks & requirements from API
+  const [taskSummary, setTaskSummary] = useState({
+    active: 0,
+    completed: 0,
+    requirements: 0,
+    declined: 0,
+  });
+
   useEffect(() => {
     if (!user?._id) return;
     const fetchData = async () => {
       try {
-        const reqRes = await axiosInstance.get(`/requirements/my/${user._id}`);
-        setRequirements(reqRes.data || []);
+        if (user.role === "client") {
+          // fetch all requirements for this client
+          const reqRes = await axiosInstance.get(
+            `/requirements/my/${user._id}`
+          );
+          setRequirements(reqRes.data || []);
+          setTasks(reqRes.data || []); // if tasks are also requirements
+        } else if (user.role === "provider") {
+          // fetch all bids placed by this provider
+          const bidsRes = await axiosInstance.get(`/bids/my-bids`, {
+            params: { provider: providerId },
+          });
+          const bids = bidsRes.data || [];
+          setMyBids(bids);
+
+          // compute summary counts from bids
+          setTaskSummary({
+            active: bids.length,
+            completed: bids.filter((b) => b.status === "Accepted").length,
+            requirements: bids.filter((b) => b.status === "Pending").length,
+            declined: bids.filter((b) => b.status === "Declined").length,
+          });
+        }
       } catch (err) {
         console.error("Dashboard load error", err);
+        notifyError("Error loading dashboard data ❌");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [user?._id]);
+  }, [user?._id, user?.role, providerId]);
+  console.log(taskSummary);
 
-  const taskSummary = {
+  const clientSummary = {
     active: tasks.filter((t) => t.status === "active").length,
     completed: tasks.filter((t) => t.status === "completed").length,
     requirements: requirements.length,
   };
 
-  const progressData = [
-    { name: "Completed", value: taskSummary.completed, color: "#22c55e" },
-    { name: "In Progress", value: taskSummary.active, color: "#3b82f6" },
-    { name: "Pending", value: taskSummary.requirements, color: "#f59e0b" },
-  ];
+  const progressData =
+    user?.role === "client"
+      ? [
+          {
+            name: "Completed",
+            value: clientSummary.completed,
+            color: "#22c55e",
+          },
+          {
+            name: "In Progress",
+            value: clientSummary.active,
+            color: "#3b82f6",
+          },
+          {
+            name: "Pending",
+            value: clientSummary.requirements,
+            color: "#f59e0b",
+          },
+        ]
+      : [
+          { name: "Bids", value: taskSummary.active, color: "#3B82F6" },
+          {
+            name: "Accepted Bids",
+            value: taskSummary.completed,
+            color: "#22C55E",
+          },
+          {
+            name: "Pending Bids",
+            value: taskSummary.requirements,
+            color: "#FACC15",
+          },
+          {
+            name: "Declined Bids",
+            value: taskSummary.declined,
+            color: "#FF0000",
+          },
+        ];
 
   if (loading) {
     return (
@@ -85,7 +149,6 @@ const ClientDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-black text-gray-200">
-      {/* Sidebar */}
       <Sidebar />
 
       {/* CLIENT DASHBOARD */}
@@ -103,7 +166,7 @@ const ClientDashboard = () => {
                 <div>
                   <h2 className="text-sm text-gray-400">Active Tasks</h2>
                   <p className="text-3xl font-extrabold text-blue-400 mt-1">
-                    {taskSummary.active}
+                    {clientSummary.active}
                   </p>
                 </div>
               </CardContent>
@@ -114,7 +177,7 @@ const ClientDashboard = () => {
                 <div>
                   <h2 className="text-sm text-gray-400">Completed</h2>
                   <p className="text-3xl font-extrabold text-green-400 mt-1">
-                    {taskSummary.completed}
+                    {clientSummary.completed}
                   </p>
                 </div>
               </CardContent>
@@ -125,7 +188,7 @@ const ClientDashboard = () => {
                 <div>
                   <h2 className="text-sm text-gray-400">Requirements</h2>
                   <p className="text-3xl font-extrabold text-yellow-400 mt-1">
-                    {taskSummary.requirements}
+                    {clientSummary.requirements}
                   </p>
                 </div>
               </CardContent>
@@ -138,15 +201,17 @@ const ClientDashboard = () => {
               <h2 className="text-2xl font-bold text-white mb-6">
                 Task Progress Overview
               </h2>
-              <div className="h-80">
+              <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+                  <PieChart
+                    margin={{ top: 20, right: 20, bottom: 40, left: 20 }}
+                  >
                     <Pie
                       data={progressData}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      outerRadius={120}
+                      outerRadius={100}
                       dataKey="value"
                       label={({ name, percent }) =>
                         `${name} ${(percent * 100).toFixed(0)}%`
@@ -157,14 +222,14 @@ const ClientDashboard = () => {
                       ))}
                     </Pie>
                     <Tooltip />
-                    <Legend verticalAlign="bottom" />
+                    <Legend verticalAlign="bottom" height={36} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
 
-          {/* Latest Requirements Section */}
+          {/* Latest Requirements */}
           <Card>
             <CardContent>
               <h2 className="text-2xl font-semibold text-white mb-6">
@@ -196,7 +261,7 @@ const ClientDashboard = () => {
                   </div>
                 ))}
               </div>
-              <div className="flex justify-center mt-6  ">
+              <div className="flex justify-center mt-6">
                 <Button
                   className="cursor-pointer"
                   onClick={() => navigate("/postedtasks")}
@@ -216,13 +281,13 @@ const ClientDashboard = () => {
             {user.name || "Provider"}'s Dashboard
           </h1>
 
-          {/* same cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card>
               <CardContent className="flex items-center gap-4">
                 <FaTasks className="text-blue-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-400">Active Tasks</h2>
+                  <h2 className="text-sm text-gray-400">Bids</h2>
                   <p className="text-3xl font-extrabold text-blue-400 mt-1">
                     {taskSummary.active}
                   </p>
@@ -233,7 +298,7 @@ const ClientDashboard = () => {
               <CardContent className="flex items-center gap-4">
                 <FaCheckCircle className="text-green-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-400">Completed</h2>
+                  <h2 className="text-sm text-gray-400">Accepted Bids</h2>
                   <p className="text-3xl font-extrabold text-green-400 mt-1">
                     {taskSummary.completed}
                   </p>
@@ -244,9 +309,20 @@ const ClientDashboard = () => {
               <CardContent className="flex items-center gap-4">
                 <FaClipboardList className="text-yellow-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-400">Requirements</h2>
+                  <h2 className="text-sm text-gray-400">Pending Bids</h2>
                   <p className="text-3xl font-extrabold text-yellow-400 mt-1">
                     {taskSummary.requirements}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="flex items-center gap-4">
+                <FaClipboardList className="text-red-800 text-3xl" />
+                <div>
+                  <h2 className="text-sm text-gray-400">Declined Bids</h2>
+                  <p className="text-3xl font-extrabold text-red-800 mt-1">
+                    {taskSummary.declined}
                   </p>
                 </div>
               </CardContent>
@@ -259,7 +335,7 @@ const ClientDashboard = () => {
               <h2 className="text-2xl font-bold text-white mb-6">
                 Task Progress Overview
               </h2>
-              <div className="h-80">
+              <div className="h-90">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -281,6 +357,50 @@ const ClientDashboard = () => {
                     <Legend verticalAlign="bottom" />
                   </PieChart>
                 </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* My Placed Bids */}
+          <Card>
+            <CardContent>
+              <h2 className="text-2xl font-semibold text-white mb-6">
+                My Placed Bids
+              </h2>
+              <div className="space-y-4">
+                {myBids.length > 0 ? (
+                  myBids.slice(0, 5).map((bid) => (
+                    <div
+                      key={bid._id}
+                      className="bg-blue-950/40 p-5 rounded-xl flex justify-between items-center"
+                    >
+                      <div>
+                        <p className="font-semibold text-lg text-white">
+                          {bid.taskTitle}
+                        </p>
+                        <span className="text-sm text-gray-400">
+                          Placed on{" "}
+                          {new Date(bid.createdAt).toLocaleDateString("en-US")}
+                        </span>
+                      </div>
+                      <Button
+                        onClick={() => navigate(`/bids/${bid._id}`)}
+                        className="px-4 py-1 text-sm cursor-pointer"
+                      >
+                        View Bid
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400">
+                    You haven't placed any bids yet.
+                  </p>
+                )}
+              </div>
+              <div className="flex justify-center mt-6">
+                <Button onClick={() => navigate("/my-bids")}>
+                  See All My Bids
+                </Button>
               </div>
             </CardContent>
           </Card>

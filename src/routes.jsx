@@ -12,6 +12,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./Components/PrivateRoutes";
 import DashboardMain from "./Pages/DashboardMain";
 import JobDetailsPage from "./Components/ViewBids";
+import BidDrawer from "./Components/BidDrawer";
 
 export const AppRoutes = () => {
   return (
@@ -46,31 +47,25 @@ export const AppRoutes = () => {
       <Route
         path="/dashboard/client"
         element={
-          <PrivateRoute
-          // allowedRoles={"provider"}
-          >
-            <DashboardMain role="client" />
-          </PrivateRoute>
+          // <PrivateRoute allowedRoles={"provider"}>
+          <DashboardMain role="client" />
+          // </PrivateRoute>
         }
       />
       <Route
         path="/dashboard/provider"
         element={
-          <PrivateRoute
-          // allowedRoles={"provider"}
-          >
-            <DashboardMain role="provider" />
-          </PrivateRoute>
+          // <PrivateRoute allowedRoles={"provider"}>
+          <DashboardMain role="provider" />
+          // {/* </PrivateRoute> */}
         }
       />
       <Route
         path="/requirements/:reqId/jobdetails"
         element={
-          // <PrivateRoute
-          // allowedRoles={"provider"}
-          // >
+          // <PrivateRoute allowedRoles={"provider"}>
           <JobDetailsPage />
-          // {/* </PrivateRoute> */}
+          // </PrivateRoute>
         }
       />
       <Route
@@ -90,11 +85,19 @@ export const AppRoutes = () => {
         }
       />
       <Route
-        path="//my-bids"
+        path="/my-bids"
         element={
           <PrivateRoute>
             <Mybid />
           </PrivateRoute>
+        }
+      />
+      <Route
+        path="/detail-bids"
+        element={
+          // <PrivateRoute>
+          <BidDrawer />
+          // </PrivateRoute>
         }
       />
       <Route
