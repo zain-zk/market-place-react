@@ -4,6 +4,7 @@ import { notifySuccess } from "../utils/toast";
 import axiosInstance from "../utils/axiosInstance";
 
 const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
+  const [category, setCategory] = useState(req.category);
   const [title, setTitle] = useState(req.title);
   const [description, setDescription] = useState(req.description);
   const [price, setPrice] = useState(req.price);
@@ -11,6 +12,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setCategory(req.category);
     setTitle(req.title);
     setDescription(req.description);
     setPrice(req.price);
@@ -21,6 +23,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
     setLoading(true);
     try {
       const res = await axiosInstance.put(`/requirements/${req._id}`, {
+        category,
         title,
         description,
         price,
@@ -41,6 +44,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
   };
 
   const handleCancel = () => {
+    setCategory(req.category);
     setTitle(req.title);
     setDescription(req.description);
     setPrice(req.price);
@@ -50,26 +54,43 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
   };
 
   return (
-    <div className="w-full ">
-      <h3 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-center gap-2">
+    <div className="w-full mb-1 ">
+      <h3 className="text-lg sm:text-xl  font-bold text-white sm:mb-1  flex items-center gap-2">
         ✏️ Edit Requirement
       </h3>
+      <label className="block text-sm text-gray-400 mb-1">
+        Select or Enter Category
+      </label>
+      <input
+        list="categories"
+        placeholder="Type or select category (e.g. Plumber)"
+        className="w-full p-2 rounded-xl bg-black/70 border border-blue-700 text-white placeholder-gray-500 focus focus:ring-blue-500"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        required
+      />
+      <datalist id="categories">
+        <option value="Plumber" />
+        <option value="Labour" />
+        <option value="Carpenter" />
+        <option value="Electrician" />
+        <option value="Painter" />
+      </datalist>
 
       <label className="text-sm text-gray-300 mb-1 block">📌 Title</label>
       <input
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full p-2 rounded-lg bg-black/50 border border-green-700 text-white mb-3"
+        className="w-full p-2 rounded-lg bg-black/50 border border-blue-700 text-white mb-1"
         placeholder="Enter title"
       />
-
       <label className="text-sm text-gray-300 mb-1 block">📝 Description</label>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="w-full p-2 rounded-lg bg-black/50 border border-green-700 text-white mb-2 resize-none"
-        rows={2}
+        className="w-full p-2 rounded-lg bg-black/50 border border-blue-700 text-white mb- resize-none"
+        rows={1}
         placeholder="Write description"
       />
 
@@ -83,7 +104,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full p-2 rounded-lg bg-black/50 border border-green-700 text-white"
+            className="w-full p-2 rounded-lg bg-black/50 border border-blue-700 text-white"
             placeholder="PKR"
           />
         </div>
@@ -96,18 +117,18 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2 rounded-lg bg-black/50 border border-green-700 text-white"
+            className="w-full p-2 rounded-lg bg-black/50 border border-blue-700 text-white"
             placeholder="City"
           />
         </div>
       </div>
 
       {/* Buttons stack on mobile */}
-      <div className="flex flex-col sm:flex-row gap-3 mt-5">
+      <div className="flex flex-col sm:flex-row gap-3 mt-4">
         <button
           disabled={loading}
           onClick={handleSave}
-          className="flex-1 bg-emerald-600 hover:bg-emerald-500 
+          className="flex-1 bg-blue-600 hover:bg-blue-500 
                      px-4 py-2 rounded-lg font-semibold text-white 
                      flex items-center justify-center gap-2 transition"
         >

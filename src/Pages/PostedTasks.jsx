@@ -1,4 +1,3 @@
-// src/pages/RequirementsPage.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import EditRequirement from "../Components/EditRequirement";
@@ -39,16 +38,32 @@ const RequirementsPage = () => {
       await axiosInstance.delete(`/requirements/${reqId}`);
       setRequirements((prev) => prev.filter((r) => r._id !== reqId));
       notifySuccess("Requirement deleted");
-    } catch (err) {
+    } catch {
       notifyError("Failed to delete requirement");
     }
   };
 
   const handleEditClick = (reqId) => setEdittingId(reqId);
   const handleCancelEdit = () => setEdittingId(null);
+
   const handleSaveEdit = async (id, updated) => {
     setRequirements((prev) => prev.map((r) => (r._id === id ? updated : r)));
     setEdittingId(null);
+  };
+
+  // ✅ mark a single requirement completed
+  const handleMarkCompleted = async (reqId) => {
+    try {
+      const res = await axiosInstance.put(`/requirements/${reqId}/status`, {
+        status: "Completed",
+      });
+      setRequirements((prev) =>
+        prev.map((r) => (r._id === reqId ? res.data : r))
+      );
+      notifySuccess("Requirement marked as completed");
+    } catch {
+      notifyError("Failed to update status");
+    }
   };
 
   const LoadingSkeleton = () => (
@@ -115,30 +130,47 @@ const RequirementsPage = () => {
                     animate={{ rotateY: edittingId === req._id ? 180 : 0 }}
                     transition={{ duration: 1 }}
                     style={{ transformStyle: "preserve-3d" }}
-                    className="relative w-full min-h-[25rem]"
+                    className="relative w-full min-h-[32rem]"
                   >
                     {/* Front side */}
                     <div
-                      className="absolute inset-0"
+                      className="absolute inset-0 sm:mt-0 "
                       style={{ backfaceVisibility: "hidden" }}
                     >
                       <div className=" border border-gray-700 rounded-3xl p-6 sm:p-8 h-full hover:border-blue-500 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1">
                         <div className="flex items-start justify-between mb-4 sm:mb-6">
                           <div className="flex-1">
                             <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 line-clamp-2">
-                              {req.title}
+                              {req.category}
                             </h3>
                             <div className="w-16 h-1 bg-blue-500 rounded-full"></div>
                           </div>
+                          <span
+                            className={`inline-block px-5 py-1 mr-2 mt-2 rounded-full text-xs font-semibold 
+                          ${
+                            req.status === "Pending"
+                              ? "bg-yellow-600"
+                              : req.status === "Active"
+                              ? "bg-blue-600"
+                              : "bg-green-600"
+                          }`}
+                          >
+                            {req.status}
+                          </span>
                           <DropdownMenu
                             onDelete={() => handleDeleteRequirement(req._id)}
                             onEdit={() => handleEditClick(req._id)}
+                            onComplete={
+                              req.status !== "Completed"
+                                ? () => handleMarkCompleted(req._id)
+                                : null
+                            }
                           />
                         </div>
-
-                        <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 line-clamp-3">
-                          {req.description}
-                        </p>
+                        <h3 className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 line-clamp-3 ">
+                          {req.title}
+                        </h3>
+                        <p className="">{/* {req.description} */}</p>
 
                         <div className="space-y-3 sm:space-y-4">
                           <div className="flex items-center justify-between py-2 px-3 sm:py-3 sm:px-4 bg-gray-800 rounded-xl border border-gray-700">
@@ -159,7 +191,7 @@ const RequirementsPage = () => {
                           </div>
                         </div>
 
-                        <div className="mt-6 sm:mt-8">
+                        <div className="mt-8 sm:mt-8  flex flex-col gap-3">
                           <Link
                             to={`/requirements/${req._id}/jobdetails`}
                             className="block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 sm:py-3 px-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25"
@@ -178,7 +210,7 @@ const RequirementsPage = () => {
                         backfaceVisibility: "hidden",
                       }}
                     >
-                      {edittingId && (
+                      {edittingId === req._id && (
                         <div className=" border border-gray-700 rounded-3xl p-4 sm:p-6">
                           <EditRequirement
                             req={req}

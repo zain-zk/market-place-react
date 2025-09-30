@@ -75,7 +75,7 @@ const Navbar = () => {
         <nav className="flex items-center gap-6">
           <ThemeLight />
 
-          {user.role === "client" && (
+          {user?.role === "client" && (
             <>
               <Link to="/dashboard/client" className={isActive("/dashboard")}>
                 Dashboard
@@ -86,7 +86,7 @@ const Navbar = () => {
             </>
           )}
 
-          {user.role === "provider" && (
+          {user?.role === "provider" && (
             <>
               <Link
                 to="/dashboard/provider"
@@ -98,7 +98,7 @@ const Navbar = () => {
                 to="/main/provider"
                 className={isActive("/job-requirements")}
               >
-                Job Requirements
+                Jobs
               </Link>
             </>
           )}
@@ -109,7 +109,7 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               className="w-8 h-8 cursor-pointer rounded-full bg-blue-700 flex items-center justify-center text-white font-bold focus:outline-none"
             >
-              {user.name
+              {user?.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
@@ -123,13 +123,13 @@ const Navbar = () => {
                 <Link
                   to="/profile"
                   onClick={() => setIsOpen(false)}
-                  className="flex justify-between items-center px-4 py-2 text-sm hover:bg-gray-100 rounded-t-xl"
+                  className="flex justify-between items-center px-4 py-2 text-sm hover:bg-blue-500 t-xl"
                 >
                   Profile <FaUserAlt className="text-gray-500 text-xs" />
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex justify-between items-center w-full px-4 py-2 text-sm transition-colors hover:bg-blue-500 hover:text-white rounded-b-xl"
+                  className="flex justify-between items-center w-full px-4 py-2 text-sm transition-colors hover:bg-red-500 hover:text-white rounded-b-xl"
                 >
                   Logout <FaSignOutAlt className="text-xs" />
                 </button>

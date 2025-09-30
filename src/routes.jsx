@@ -45,6 +45,14 @@ export const AppRoutes = () => {
         }
       />
       <Route
+        path="/detail-bids"
+        element={
+          // <PrivateRoute>
+          <BidDrawer />
+          // </PrivateRoute>
+        }
+      />
+      <Route
         path="/dashboard/client"
         element={
           // <PrivateRoute allowedRoles={"provider"}>
@@ -92,14 +100,7 @@ export const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/detail-bids"
-        element={
-          // <PrivateRoute>
-          <BidDrawer />
-          // </PrivateRoute>
-        }
-      />
+
       <Route
         path="/chat/:otherUserId/:bidId"
         element={
@@ -110,7 +111,7 @@ export const AppRoutes = () => {
       />
 
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/register-role" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

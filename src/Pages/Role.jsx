@@ -12,7 +12,7 @@ const RegisterRole = () => {
         <h2 className="text-2xl sm:text-3xl font-bold text-blue-400 mb-2">
           Select Your Role
         </h2>
-        <p className="text-gray-300 mb-8 text-sm sm:text-base">
+        <p className="text-gray-200 mb-8 text-sm sm:text-base">
           Choose how you want to use the platform
         </p>
 

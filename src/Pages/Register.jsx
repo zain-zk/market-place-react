@@ -228,7 +228,7 @@ export default function Register() {
             </div>
           )}
 
-          <label className="flex items-center text-sm text-gray-400 mt-2 select-none">
+          <label className="flex items-center text-sm text-gray-200 mt-2 select-none">
             <input type="checkbox" required className="mr-2 accent-blue-500" />I
             agree to the platform accessing my information
           </label>
@@ -245,11 +245,11 @@ export default function Register() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-6 text-xs sm:text-sm">
             <Link
               to="/register-role"
-              className="text-gray-400 hover:text-blue-400 text-center"
+              className="text-gray-100 hover:text-blue-400 text-center"
             >
               ← Choose a different role
             </Link>
-            <p className="text-gray-400 text-center">
+            <p className="text-gray-200 text-center">
               Already have an account?{" "}
               <Link to="/login" className="text-blue-400 hover:underline">
                 Login here

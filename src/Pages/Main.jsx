@@ -1,6 +1,6 @@
 // src/pages/MainPage.jsx
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaMoneyBillWave,
@@ -27,14 +27,11 @@ const MainPage = ({ role: propRole }) => {
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState("");
 
   // provider states
   const [requirements, setRequirements] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(false);
-
-  // drawer
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
 
   // filters
   const [searchTerm, setSearchTerm] = useState("");
@@ -71,7 +68,7 @@ const MainPage = ({ role: propRole }) => {
 
   const handlePostRequirement = async (e) => {
     e.preventDefault();
-    if (!title || !description || !price || !location) {
+    if (!title || !description || !price || !location || !category) {
       notifyInfo("⚠️ Please fill all fields");
       return;
     }
@@ -79,7 +76,7 @@ const MainPage = ({ role: propRole }) => {
       setLoading(true);
       const res = await axiosInstance.post(
         "/requirements",
-        { client: userId, title, description, price, location },
+        { client: userId, title, description, price, location, category },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
@@ -128,6 +125,26 @@ const MainPage = ({ role: propRole }) => {
                 Post a New Job
               </h2>
               <form onSubmit={handlePostRequirement} className="grid gap-7">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Select or Enter Category
+                  </label>
+                  <input
+                    list="categories"
+                    placeholder="Type or select category (e.g. Plumber)"
+                    className="w-full p-4 rounded-xl bg-black/70 border border-blue-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                  />
+                  <datalist id="categories">
+                    <option value="Plumber" />
+                    <option value="Labour" />
+                    <option value="Carpenter" />
+                    <option value="Electrician" />
+                    <option value="Painter" />
+                  </datalist>
+                </div>
                 <input
                   type="text"
                   placeholder="Requirement Title"
@@ -238,8 +255,12 @@ const MainPage = ({ role: propRole }) => {
               hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1 transition"
                   >
                     <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                      {task.title} 📋
+                      {task.category} 📋
                     </h2>
+                    <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
+                      {task.title}
+                    </h3>
+
                     <p className="text-gray-300 mb-4">{task.description}</p>
                     <div className="space-y-2 text-sm">
                       <p className="text-blue-400 flex items-center gap-2">
@@ -250,17 +271,15 @@ const MainPage = ({ role: propRole }) => {
                         <FaMapMarkerAlt /> Location: {task.location}
                       </p>
                     </div>
-                    <button
-                      onClick={() => {
-                        setSelectedTask(task);
-                        setIsDrawerOpen(true);
-                      }}
+                    <Link
+                      to={"/detail-bids"}
+                      state={{ task }}
                       className="mt-5 w-full flex items-center justify-center gap-2
                              bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold py-2.5 rounded-xl 
                              hover:from-blue-500 hover:to-blue-400 hover:scale-[1.03] hover:shadow-lg transition-all"
                     >
                       <FaGavel className="text-lg" /> Place Bid
-                    </button>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -270,12 +289,6 @@ const MainPage = ({ role: propRole }) => {
           </div>
         )}
       </main>
-      <BidDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        onSubmit={() => {}}
-        selectedTask={selectedTask}
-      />
     </div>
   );
 };

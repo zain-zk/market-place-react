@@ -8,7 +8,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
 import { FaClipboardList, FaTasks, FaCheckCircle } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import userContext from "../contexts/userContext";
@@ -49,7 +50,6 @@ const ClientDashboard = () => {
   const [requirements, setRequirements] = useState([]);
   const [myBids, setMyBids] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [taskSummary, setTaskSummary] = useState({
     active: 0,
     completed: 0,
@@ -66,8 +66,14 @@ const ClientDashboard = () => {
           const reqRes = await axiosInstance.get(
             `/requirements/my/${user._id}`
           );
-          setRequirements(reqRes.data || []);
-          setTasks(reqRes.data || []); // if tasks are also requirements
+
+          // 🔥 sort by createdAt descending (latest first)
+          const sortedReqs = (reqRes.data || []).sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+
+          setRequirements(sortedReqs);
+          setTasks(sortedReqs); // if tasks are also requirements
         } else if (user.role === "provider") {
           // fetch all bids placed by this provider
           const bidsRes = await axiosInstance.get(`/bids/my-bids`, {
@@ -75,7 +81,6 @@ const ClientDashboard = () => {
           });
           const bids = bidsRes.data || [];
           setMyBids(bids);
-
           // compute summary counts from bids
           setTaskSummary({
             active: bids.length,
@@ -93,30 +98,35 @@ const ClientDashboard = () => {
     };
     fetchData();
   }, [user?._id, user?.role, providerId]);
-  console.log(taskSummary);
 
   const clientSummary = {
-    active: tasks.filter((t) => t.status === "active").length,
-    completed: tasks.filter((t) => t.status === "completed").length,
-    requirements: requirements.length,
+    inprogress: requirements.length,
+    Active: requirements.filter((r) => r.status === "Active").length,
+    Completed: requirements.filter((r) => r.status === "Completed").length,
+    Pending: requirements.filter((r) => r.status === "Pending").length,
   };
 
   const progressData =
     user?.role === "client"
       ? [
           {
+            name: "InProgress",
+            value: clientSummary.inprogress,
+            color: "#06b6d4",
+          },
+          {
             name: "Completed",
-            value: clientSummary.completed,
+            value: clientSummary.Completed,
             color: "#22c55e",
           },
           {
-            name: "In Progress",
-            value: clientSummary.active,
+            name: "Active",
+            value: clientSummary.Active,
             color: "#3b82f6",
           },
           {
             name: "Pending",
-            value: clientSummary.requirements,
+            value: clientSummary.Pending,
             color: "#f59e0b",
           },
         ]
@@ -135,7 +145,7 @@ const ClientDashboard = () => {
           {
             name: "Declined Bids",
             value: taskSummary.declined,
-            color: "#FF0000",
+            color: "#AA0000",
           },
         ];
 
@@ -159,14 +169,27 @@ const ClientDashboard = () => {
           </h1>
 
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Link to="/postedtasks">
+              <Card>
+                <CardContent className="flex items-center gap-4">
+                  <FaSpinner className="text-cyan-400 animate-spin" size={24} />
+                  <div>
+                    <h2 className="text-sm text-gray-400">In Progress</h2>
+                    <p className="text-3xl font-extrabold text-cyan-400 mt-1">
+                      {clientSummary.inprogress}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
             <Card>
               <CardContent className="flex items-center gap-4">
                 <FaTasks className="text-blue-400 text-3xl" />
                 <div>
                   <h2 className="text-sm text-gray-400">Active Tasks</h2>
                   <p className="text-3xl font-extrabold text-blue-400 mt-1">
-                    {clientSummary.active}
+                    {clientSummary.Active}
                   </p>
                 </div>
               </CardContent>
@@ -177,7 +200,7 @@ const ClientDashboard = () => {
                 <div>
                   <h2 className="text-sm text-gray-400">Completed</h2>
                   <p className="text-3xl font-extrabold text-green-400 mt-1">
-                    {clientSummary.completed}
+                    {clientSummary.Completed}
                   </p>
                 </div>
               </CardContent>
@@ -186,9 +209,9 @@ const ClientDashboard = () => {
               <CardContent className="flex items-center gap-4">
                 <FaClipboardList className="text-yellow-400 text-3xl" />
                 <div>
-                  <h2 className="text-sm text-gray-400">Requirements</h2>
+                  <h2 className="text-sm text-gray-400">Pending</h2>
                   <p className="text-3xl font-extrabold text-yellow-400 mt-1">
-                    {clientSummary.requirements}
+                    {clientSummary.Pending}
                   </p>
                 </div>
               </CardContent>
@@ -254,7 +277,7 @@ const ClientDashboard = () => {
                       onClick={() =>
                         navigate(`/requirements/${req._id}/jobdetails`)
                       }
-                      className="px-4 py-1 text-sm cursor-pointer "
+                      className="px-4 py-1 text-sm register cursor-pointer "
                     >
                       View
                     </Button>
@@ -277,23 +300,25 @@ const ClientDashboard = () => {
       {/* PROVIDER DASHBOARD */}
       {user.role === "provider" && (
         <div className="flex-1 p-8 space-y-10">
-          <h1 className="text-4xl font-extrabold mt-14 text-white">
+          <h1 className="text-4xl flex justify-center font-extrabold mt-14 text-white">
             {user.name || "Provider"}'s Dashboard
           </h1>
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="flex items-center gap-4">
-                <FaTasks className="text-blue-400 text-3xl" />
-                <div>
-                  <h2 className="text-sm text-gray-400">Bids</h2>
-                  <p className="text-3xl font-extrabold text-blue-400 mt-1">
-                    {taskSummary.active}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link to="/my-bids">
+              <Card>
+                <CardContent className="flex items-center gap-4">
+                  <FaTasks className="text-blue-400 text-3xl" />
+                  <div>
+                    <h2 className="text-sm text-gray-400">Bids</h2>
+                    <p className="text-3xl font-extrabold text-blue-400 mt-1">
+                      {taskSummary.active}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
             <Card>
               <CardContent className="flex items-center gap-4">
                 <FaCheckCircle className="text-green-400 text-3xl" />
@@ -369,25 +394,32 @@ const ClientDashboard = () => {
               </h2>
               <div className="space-y-4">
                 {myBids.length > 0 ? (
-                  myBids.slice(0, 5).map((bid) => (
+                  myBids.slice(0, 3).map((bid) => (
                     <div
                       key={bid._id}
                       className="bg-blue-950/40 p-5 rounded-xl flex justify-between items-center"
                     >
                       <div>
                         <p className="font-semibold text-lg text-white">
-                          {bid.taskTitle}
+                          Delivery Time {""}
+                          {bid.deliveryTime} Hours
                         </p>
                         <span className="text-sm text-gray-400">
                           Placed on{" "}
                           {new Date(bid.createdAt).toLocaleDateString("en-US")}
                         </span>
                       </div>
-                      <Button
-                        onClick={() => navigate(`/bids/${bid._id}`)}
-                        className="px-4 py-1 text-sm cursor-pointer"
-                      >
-                        View Bid
+                      <Button>
+                        <Link
+                          to="/detail-bids"
+                          state={{
+                            bid,
+                            task: bid.requirement, // pass the related requirement
+                          }}
+                          className="px-4 py-1 register text-sm cursor-pointer  "
+                        >
+                          View
+                        </Link>
                       </Button>
                     </div>
                   ))

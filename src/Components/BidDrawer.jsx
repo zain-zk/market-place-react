@@ -1,26 +1,46 @@
-import { motion, AnimatePresence } from "framer-motion";
+// src/components/BidDrawer.jsx
 import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { notifySuccess } from "../utils/toast";
-import { useNavigate } from "react-router-dom";
 import userContext from "../contexts/userContext";
 import axiosInstance from "../utils/axiosInstance";
-import { FaMoneyBillWave, FaMapMarkerAlt, FaUserTie } from "react-icons/fa";
+import Sidebar from "../Components/Sidebar";
+import {
+  FaMoneyBillWave,
+  FaMapMarkerAlt,
+  FaUserTie,
+  FaArrowLeft,
+  FaComments, // ✅ icon for chat button
+} from "react-icons/fa";
 import { MdOutlineDateRange } from "react-icons/md";
 
-const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
-  if (!isOpen) return null;
+const statusColors = {
+  Pending: "bg-yellow-400 text-black",
+  Accepted: "bg-blue-600 text-white",
+  Declined: "bg-red-500 text-white",
+};
+
+export default function BidDrawer() {
   const navigate = useNavigate();
   const { user } = useContext(userContext);
+  const location = useLocation();
+  const { bid } = location.state || {};
+  const selectedTask = location.state?.task || bid?.requirement || {};
 
-  // ✅ all bids already placed on this job
   const [existingBids, setExistingBids] = useState([]);
 
+  // filter only this task's bids
+  const reqbids = existingBids.filter(
+    (bid) => bid?.requirement?._id === selectedTask?._id
+  );
+
   useEffect(() => {
-    if (selectedTask?._id && user?._id) {
+    if (user?._id && (selectedTask?._id || bid?._id)) {
       (async () => {
         try {
+          const requirementId = selectedTask?._id || bid?.requirement?._id;
           const res = await axiosInstance.get("/bids/my-bids", {
-            params: { provider: user._id, requirement: selectedTask._id },
+            params: { provider: user._id, requirement: requirementId },
           });
           setExistingBids(res.data);
         } catch (err) {
@@ -28,7 +48,7 @@ const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
         }
       })();
     }
-  }, [selectedTask?._id, user?._id]);
+  }, [selectedTask?._id, user?._id, bid?._id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,9 +64,7 @@ const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
 
     try {
       const response = await axiosInstance.post("/bids", bidData);
-      onSubmit(response.data);
       notifySuccess("Bid placed successfully!");
-      // refresh bids
       setExistingBids((prev) => [...prev, response.data]);
       e.target.reset();
     } catch (error) {
@@ -56,160 +74,175 @@ const BidDrawer = ({ isOpen, onClose, onSubmit, selectedTask }) => {
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black z-40"
-            onClick={onClose}
-          />
-
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="fixed top-0 right-0 h-full w-full sm:w-1/3 bg-white text-gray-800 shadow-2xl z-50 rounded-l-2xl flex flex-col overflow-y-auto"
+    <div className="min-h-screen bg-black text-gray-200">
+      <Sidebar />
+      {/* Header */}
+      <header className="bg-black sticky top-0 z-10">
+        <div className="flex justify-between items-center px-6 py-4 mt-16">
+          <h2 className="text-2xl font-bold flex flex-1 justify-center text-blue-400">
+            Job Details & Place Bid
+          </h2>
+          <button
+            onClick={() => navigate("/main/provider")}
+            className="flex items-center gap-2 cursor-pointer text-white hover:text-blue-400 transition"
           >
-            {/* Header */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-green-700">
-                Job Details & Place Bid
-              </h2>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 text-3xl leading-none"
-              >
-                &times;
-              </button>
-            </div>
+            <FaArrowLeft /> Back
+          </button>
+        </div>
+      </header>
 
-            <div className="p-6 space-y-6">
-              {/* 📝 Job Detail Section */}
-              <div className="bg-green-50 rounded-xl p-5 space-y-3 shadow">
-                <h3 className="text-lg font-semibold text-green-700">
-                  {selectedTask?.title}
-                </h3>
-                <p className="text-sm text-gray-700">
-                  {selectedTask?.description || "No description provided."}
+      <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+        {/* Job Detail Section */}
+        <div className="rounded-2xl bg-black border border-blue-800/40 shadow p-6 space-y-4">
+          <h3 className="text-3xl font-bold text-blue-400">
+            {selectedTask?.title}
+          </h3>
+          <p className="text-gray-300 text-lg">
+            {selectedTask?.description || "No description provided."}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-base">
+            <div className="flex items-center gap-3">
+              <FaUserTie className="text-blue-400 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-400">Client</p>
+                <p className="text-white">
+                  {selectedTask?.client?.name || "Unknown"}
                 </p>
-                <div className="text-sm space-y-1">
-                  <p className="flex items-center gap-2">
-                    <FaUserTie className="text-green-600" />
-                    <span className="font-semibold">Client:</span>{" "}
-                    {selectedTask?.client?.name || "Unknown"}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <FaMapMarkerAlt className="text-red-500" />
-                    <span className="font-semibold">Location:</span>{" "}
-                    {selectedTask?.location || "N/A"}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <FaMoneyBillWave className="text-yellow-500" />
-                    <span className="font-semibold">Budget:</span> PKR{" "}
-                    {selectedTask?.price || "N/A"}
-                  </p>
-                  <p className="flex items-center gap-2 text-gray-500 text-xs">
-                    <MdOutlineDateRange />{" "}
-                    {selectedTask?.createdAt
-                      ? new Date(selectedTask?.createdAt).toLocaleDateString()
-                      : ""}
-                  </p>
-                </div>
               </div>
-
-              {/* 📝 Place Bid Form */}
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-6 bg-white border rounded-xl p-5 shadow"
-              >
-                <h4 className="text-lg font-semibold text-green-700">
-                  Place Your Bid
-                </h4>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Bid Amount (PKR)
-                  </label>
-                  <input
-                    type="number"
-                    name="amount"
-                    placeholder="Enter your bid"
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Proposal / Notes (optional)
-                  </label>
-                  <textarea
-                    name="proposal"
-                    rows="3"
-                    placeholder="Write a short proposal..."
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Delivery Time (Hours)
-                  </label>
-                  <input
-                    type="number"
-                    name="deliveryTime"
-                    placeholder="e.g., 5"
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 transition"
-                >
-                  Submit Bid
-                </button>
-              </form>
-
-              {/* 📝 Existing Bids Status */}
-              {existingBids.length > 0 && (
-                <div className="bg-gray-50 rounded-xl p-5 shadow space-y-3">
-                  <h4 className="text-lg font-semibold text-green-700">
-                    Your Bid Status
-                  </h4>
-                  {existingBids.map((bid) => (
-                    <div
-                      key={bid._id}
-                      className="flex justify-between items-center bg-white border rounded-lg px-4 py-2 text-sm"
-                    >
-                      <span>
-                        PKR {bid.amount} - {bid.proposal || "No proposal"}
-                      </span>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          bid.status === "Pending"
-                            ? "bg-yellow-400 text-black"
-                            : bid.status === "Accepted"
-                            ? "bg-blue-500 text-white"
-                            : "bg-red-500 text-white"
-                        }`}
-                      >
-                        {bid.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-};
+            <div className="flex items-center gap-3">
+              <FaMapMarkerAlt className="text-blue-400 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-400">Location</p>
+                <p className="text-white">{selectedTask?.location || "N/A"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <FaMoneyBillWave className="text-blue-400 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-400">Budget</p>
+                <p className="text-white">PKR {selectedTask?.price || "N/A"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <MdOutlineDateRange className="text-blue-400 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-400">Posted On</p>
+                <p className="text-white">
+                  {selectedTask?.createdAt
+                    ? new Date(selectedTask?.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )
+                    : ""}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-export default BidDrawer;
+        {/* Place Bid Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-6 rounded-2xl bg-black border border-blue-800/40 shadow p-6"
+        >
+          <h4 className="text-3xl font-bold text-blue-400">Place Your Bid</h4>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Bid Amount (PKR)
+            </label>
+            <input
+              type="number"
+              name="amount"
+              placeholder="Enter your bid"
+              required
+              className="w-full border border-blue-800 rounded-lg px-4 py-2 bg-black text-white focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Proposal / Notes (optional)
+            </label>
+            <textarea
+              name="proposal"
+              rows="3"
+              placeholder="Write a short proposal..."
+              className="w-full border border-blue-800 rounded-lg px-4 py-2 bg-black text-white focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Delivery Time (Hours)
+            </label>
+            <input
+              type="number"
+              name="deliveryTime"
+              placeholder="e.g., 5"
+              required
+              className="w-full border border-blue-800 rounded-lg px-4 py-2 bg-black text-white focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:scale-[1.02] transition"
+          >
+            Submit Bid
+          </button>
+        </form>
+
+        {/* Existing Bids */}
+        {reqbids.length > 0 && (
+          <div className="rounded-2xl bg-black border border-blue-800/40 shadow p-6 space-y-4">
+            <h4 className="text-3xl font-bold text-blue-400">
+              Your Bid Status
+            </h4>
+            <div className="overflow-x-auto">
+              <div className="min-w-[700px] grid grid-cols-4 bg-blue-800/60 text-white font-semibold px-4 py-3 rounded-t-xl">
+                <span>Amount</span>
+                <span>Proposal</span>
+                <span>Status</span>
+                <span>Action</span>
+              </div>
+              {reqbids.map((bid) => (
+                <div
+                  key={bid._id}
+                  className="min-w-[700px] grid grid-cols-4 items-center bg-black border-b border-blue-800/40 px-4 py-4 hover:bg-blue-950/30 transition"
+                >
+                  <span className="font-semibold text-white">
+                    PKR {bid.amount}
+                  </span>
+                  <span className="text-gray-300 truncate max-w-[200px]">
+                    {bid.proposal || "-"}
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-center text-sm font-semibold ${
+                      statusColors[bid.status]
+                    }`}
+                  >
+                    {bid.status}
+                  </span>
+
+                  {/* ✅ Chat Button */}
+                  {bid.status === "Accepted" && (
+                    <Link
+                      to={`/chat/${selectedTask?.client?._id}/${bid._id}`}
+                      className="px-8 py-2 w-20 ml-10 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:scale-[1.02] transition"
+                    >
+                      <FaComments />
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

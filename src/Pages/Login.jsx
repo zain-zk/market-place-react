@@ -93,7 +93,7 @@ const LoginPage = () => {
                 type="email"
                 placeholder="Enter your email"
                 autoComplete="off"
-                className="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400"
+                className="bg-transparent register outline-none text-sm w-full text-white placeholder-gray-400"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -106,7 +106,7 @@ const LoginPage = () => {
                 type="text"
                 placeholder="Username"
                 autoComplete="off"
-                className="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400"
+                className="bg-transparent register outline-none text-sm w-full text-white placeholder-gray-400"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -118,7 +118,7 @@ const LoginPage = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400"
+                className="bg-transparent outline-none register  text-sm w-full text-white placeholder-gray-400"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

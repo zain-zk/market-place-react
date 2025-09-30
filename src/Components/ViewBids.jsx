@@ -111,8 +111,11 @@ const JobDetailsPage = () => {
           {/* Job Info */}
           <section className="rounded-2xl bg-black border border-blue-800/40 shadow p-8 mb-10">
             <h1 className="text-4xl font-bold text-blue-400 mb-4">
-              {job.title}
+              {job.category}
             </h1>
+            <h3 className="text-2xl font-bold text-blue-300 mb-4">
+              {job.title}
+            </h3>
             <p className="text-gray-300 text-lg mb-8">{job.description}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-base">
