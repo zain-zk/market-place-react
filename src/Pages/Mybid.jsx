@@ -76,9 +76,31 @@ const MyBidsPage = () => {
               >
                 {/* Task & Client Info */}
                 <div className="space-y-3 mb-6">
-                  <h2 className="text-2xl font-bold text-blue-300">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-blue-300">
+                      {bid.requirement?.category || "Untitled Task"}
+                    </h2>
+                    <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-semibold
+                      ${
+                        bid.requirement?.status === "Pending"
+                          ? "bg-yellow-500"
+                          : bid.requirement?.status === "Active"
+                          ? "bg-blue-600"
+                          : bid.requirement?.status === "Completed"
+                          ? "bg-green-500 "
+                          : "bg-green-700"
+                      }`}
+                      >
+                        {bid.requirement?.status}
+                      </span>
+                    </h3>
+                  </div>
+
+                  <h4 className="text-1xl font-bold text-blue-300">
                     {bid.requirement?.title || "Untitled Task"}
-                  </h2>
+                  </h4>
 
                   <p className="text-gray-300 text-sm flex items-center gap-2">
                     <FaUserTie className="text-blue-400" />
@@ -138,21 +160,22 @@ const MyBidsPage = () => {
                     </button>
                   )}
 
-                  {bid.status === "Accepted" && (
-                    <Link
-                      to={`/chat/${bid.requirement?.client?._id}/${bid._id}`}
-                      onClick={() =>
-                        handleChat(
-                          bid.requirement?.client?.name,
-                          bid.requirement?.title
-                        )
-                      }
-                      className="relative inline-flex items-center gap-2 px-4 py-2 overflow-hidden font-semibold text-white rounded-xl group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-600 shadow-lg transition-all duration-300"
-                    >
-                      <span className="absolute right-0 w-8 h-32 -mt-12 transition-transform duration-500 rotate-12 translate-x-12 bg-white opacity-10 group-hover:-translate-x-40 ease"></span>
-                      <MdChat /> Chat
-                    </Link>
-                  )}
+                  {bid.status === "Accepted" &&
+                    bid.requirement?.status === "Active" && (
+                      <Link
+                        to={`/chat/${bid.requirement?.client?._id}/${bid._id}`}
+                        onClick={() =>
+                          handleChat(
+                            bid.requirement?.client?.name,
+                            bid.requirement?.title
+                          )
+                        }
+                        className="relative inline-flex items-center gap-2 px-4 py-2 overflow-hidden font-semibold text-white rounded-xl group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-600 shadow-lg transition-all duration-300"
+                      >
+                        <span className="absolute right-0 w-8 h-32 -mt-12 transition-transform duration-500 rotate-12 translate-x-12 bg-white opacity-10 group-hover:-translate-x-40 ease"></span>
+                        <MdChat /> Chat
+                      </Link>
+                    )}
                 </div>
               </div>
             ))}

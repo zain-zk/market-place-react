@@ -54,7 +54,7 @@ const EditRequirement = ({ req, onSave, onCancel, setEdittingId }) => {
   };
 
   return (
-    <div className="w-full mb-1 ">
+    <div className="w-full  mb-1 ">
       <h3 className="text-lg sm:text-xl  font-bold text-white sm:mb-1  flex items-center gap-2">
         ✏️ Edit Requirement
       </h3>

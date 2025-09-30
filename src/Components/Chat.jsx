@@ -92,7 +92,7 @@ const ChatPage = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-black to-gray-900 text-white">
+    <div className="flex flex-col h-screen bg-gradient-to-br bg-black text-white">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 bg-blue-900 shadow-md">
         <button

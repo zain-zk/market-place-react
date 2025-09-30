@@ -4,6 +4,7 @@ import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { notifyError, notifyInfo, notifySuccess } from "../utils/toast.js";
 import userContext from "../contexts/userContext.js";
+import ThemeLight from "../Components/ThemeLight.jsx";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,8 +29,8 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      notifyError("Please enter email and password");
+    if (!email || !name || !password) {
+      notifyError("Please enter email , name and password");
       return;
     }
     try {
@@ -38,7 +39,7 @@ const LoginPage = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email, name, password }),
         }
       );
 

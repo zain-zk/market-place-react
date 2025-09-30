@@ -254,9 +254,27 @@ const MainPage = ({ role: propRole }) => {
               border border-blue-700/100 rounded-3xl p-8 hover:border-blue-500/50 
               hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1 transition"
                   >
-                    <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                      {task.category} 📋
-                    </h2>
+                    <div className="flex justify-between items-center">
+                      <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                        {task.category} 📋
+                      </h2>
+                      <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold
+                          ${
+                            task.status === "Pending"
+                              ? "bg-yellow-500 "
+                              : task.status === "Active"
+                              ? "bg-blue-600"
+                              : task.status === "Completed"
+                              ? "bg-green-500 "
+                              : "bg-green-700 "
+                          }`}
+                        >
+                          {task.status}
+                        </span>
+                      </h3>
+                    </div>
                     <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
                       {task.title}
                     </h3>
@@ -271,15 +289,23 @@ const MainPage = ({ role: propRole }) => {
                         <FaMapMarkerAlt /> Location: {task.location}
                       </p>
                     </div>
-                    <Link
-                      to={"/detail-bids"}
-                      state={{ task }}
-                      className="mt-5 w-full flex items-center justify-center gap-2
+                    {(task.status === "Active" ||
+                      task.status === "Pending") && (
+                      <Link
+                        to={"/detail-bids"}
+                        state={{ task }}
+                        className="mt-5 w-full flex items-center justify-center gap-2
                              bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold py-2.5 rounded-xl 
                              hover:from-blue-500 hover:to-blue-400 hover:scale-[1.03] hover:shadow-lg transition-all"
-                    >
-                      <FaGavel className="text-lg" /> Place Bid
-                    </Link>
+                      >
+                        <FaGavel className="text-lg" /> Place Bid
+                      </Link>
+                    )}
+                    {task.status === "Completed" && (
+                      <p className="mt-5 w-full text-center text-green-400 font-semibold py-2.5 rounded-xl border border-green-400">
+                        ✅ Task Completed
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>

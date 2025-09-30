@@ -86,10 +86,10 @@ const RequirementsPage = () => {
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Sidebar />
 
-      <main className="flex-1 mt-10 relative">
-        <div className="relative z-10 p-4 sm:p-6 lg:p-10">
+      <main className="flex-1 mt-14 sm:mt-12 relative">
+        <div className="relative z-10 p-4 sm:p-8">
           {/* Header */}
-          <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className=" flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-500 mb-2">
                 My Requirements
@@ -130,11 +130,11 @@ const RequirementsPage = () => {
                     animate={{ rotateY: edittingId === req._id ? 180 : 0 }}
                     transition={{ duration: 1 }}
                     style={{ transformStyle: "preserve-3d" }}
-                    className="relative w-full min-h-[32rem]"
+                    className="relative w-full min-h-[32rem] sm:min-h-[26rem] "
                   >
                     {/* Front side */}
                     <div
-                      className="absolute inset-0 sm:mt-0 "
+                      className="absolute inset-0 sm:mt-4 "
                       style={{ backfaceVisibility: "hidden" }}
                     >
                       <div className=" border border-gray-700 rounded-3xl p-6 sm:p-8 h-full hover:border-blue-500 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1">
@@ -152,20 +152,25 @@ const RequirementsPage = () => {
                               ? "bg-yellow-600"
                               : req.status === "Active"
                               ? "bg-blue-600"
+                              : req.status === "Completed"
+                              ? "bg-green-500"
                               : "bg-green-600"
                           }`}
                           >
                             {req.status}
                           </span>
-                          <DropdownMenu
-                            onDelete={() => handleDeleteRequirement(req._id)}
-                            onEdit={() => handleEditClick(req._id)}
-                            onComplete={
-                              req.status !== "Completed"
-                                ? () => handleMarkCompleted(req._id)
-                                : null
-                            }
-                          />
+                          {(req.status === "Active" ||
+                            req.status === "Pending") && (
+                            <DropdownMenu
+                              onDelete={() => handleDeleteRequirement(req._id)}
+                              onEdit={() => handleEditClick(req._id)}
+                              onComplete={
+                                req.status !== "Completed"
+                                  ? () => handleMarkCompleted(req._id)
+                                  : null
+                              }
+                            />
+                          )}
                         </div>
                         <h3 className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 line-clamp-3 ">
                           {req.title}

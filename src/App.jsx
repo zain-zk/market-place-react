@@ -35,6 +35,7 @@ const App = () => {
     <userContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
         <AppRoutes />
+
         <ToastProvider />
       </BrowserRouter>
     </userContext.Provider>

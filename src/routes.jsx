@@ -13,7 +13,6 @@ import PrivateRoute from "./Components/PrivateRoutes";
 import DashboardMain from "./Pages/DashboardMain";
 import JobDetailsPage from "./Components/ViewBids";
 import BidDrawer from "./Components/BidDrawer";
-
 export const AppRoutes = () => {
   return (
     <Routes>
