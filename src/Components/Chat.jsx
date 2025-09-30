@@ -1,8 +1,6 @@
-// src/pages/ChatPage.jsx
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { io } from "socket.io-client";
 import userContext from "../contexts/userContext";
@@ -20,7 +18,6 @@ const ChatPage = () => {
   const { user } = useContext(userContext);
   const role = user?.role || "client";
 
-  // Connect to socket only on /chat
   useEffect(() => {
     if (!user) return;
 
@@ -45,7 +42,6 @@ const ChatPage = () => {
     };
   }, [user, location.pathname]);
 
-  // Fetch chat history
   useEffect(() => {
     async function fetchHistory() {
       try {
@@ -96,19 +92,21 @@ const ChatPage = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-black to-green-950 text-white">
+    <div className="flex flex-col h-screen bg-gradient-to-br bg-black text-white">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-green-900 shadow-md">
+      <div className="flex items-center gap-3 p-4 bg-blue-900 shadow-md">
         <button
           onClick={() =>
-            role === "client" ? navigate("/postedtasks") : navigate("/my-bids")
+            role === "client"
+              ? navigate("/postedtasks")
+              : navigate("/main/provider")
           }
-          className="p-2 hover:bg-green-800 rounded-full"
+          className="p-2 hover:bg-blue-800 rounded-full text-white"
         >
           <FaArrowLeft size={22} />
         </button>
         <div>
-          <h1 className="text-lg font-bold">
+          <h1 className="text-lg font-bold text-white">
             {role === "client" ? "Chat with Provider 🛠" : "Chat with Client 👤"}
           </h1>
           <p className="text-sm text-gray-300">Secure & Private 💬</p>
@@ -130,8 +128,8 @@ const ChatPage = () => {
             <div
               className={`max-w-xs px-4 py-2 rounded-2xl shadow-md ${
                 msg.sender === user._id
-                  ? "bg-black text-green-400 border border-green-700 rounded-br-none"
-                  : "bg-green-800 text-white rounded-bl-none"
+                  ? "bg-black text-blue-400 border border-blue-700 rounded-br-none"
+                  : "bg-blue-800 text-white rounded-bl-none"
               }`}
             >
               {msg.text}
@@ -144,18 +142,18 @@ const ChatPage = () => {
       {/* Input */}
       <form
         onSubmit={sendMessage}
-        className="p-4 bg-green-900 flex items-center gap-2"
+        className="p-4 bg-blue-900 flex items-center gap-2"
       >
         <input
           type="text"
           placeholder="Type a message... ✍️"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 px-4 py-2 login rounded-full bg-black border border-green-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="flex-1 px-4 py-2 rounded-full bg-black border border-blue-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           type="submit"
-          className="p-3 bg-green-600 hover:bg-green-500 rounded-full"
+          className="p-3 bg-blue-600 hover:bg-blue-500 rounded-full text-white"
         >
           <FaPaperPlane size={18} />
         </button>

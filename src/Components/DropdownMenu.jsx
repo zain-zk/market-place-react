@@ -1,12 +1,10 @@
-// src/components/DropdownMenu.jsx◘
-import { FiEdit } from "react-icons/fi"; // at the top with other imports
+import { FiEdit } from "react-icons/fi";
 import React, { useState, useRef, useEffect } from "react";
 
-const DropdownMenu = ({ onDelete , onEdit}) => {
+const DropdownMenu = ({ onDelete, onEdit, onComplete }) => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -43,34 +41,51 @@ const DropdownMenu = ({ onDelete , onEdit}) => {
 
       {/* Dropdown */}
       {open && (
-
-          <div
-            className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700/50 
+        <div
+          className="absolute right-0 mt-2 w-44 bg-gray-200 border border-gray-700/50 
                       rounded-xl shadow-lg z-50 animate-fade-in"
-          >
-            <ul className="py-2 text-sm text-gray-300">
+        >
+          <ul className="py-2 text-sm text-gray-900">
+            <li>
+              <button
+                onClick={() => {
+                  onEdit();
+                  setOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-emerald-600/20 
+                            hover:text-blue-400 transition rounded-lg flex items-center gap-2"
+              >
+                <FiEdit className="text-lg" /> Edit
+              </button>
+            </li>
+            {onComplete && (
               <li>
                 <button
-                  onClick={onEdit}
-                  className="w-full text-left px-4 py-2 hover:bg-emerald-600/20 
-                            hover:text-emerald-400  transition rounded-lg flex items-center gap-2"
+                  onClick={() => {
+                    onComplete();
+                    setOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-green-600/20 
+                              hover:text-green-600 transition rounded-lg flex items-center gap-2"
                 >
-                  <FiEdit className="text-lg loginput" /> <p className="loginput"> Edit</p>
+                  ✔ Mark Completed
                 </button>
               </li>
-              <li>
-                <button
-                  onClick={onDelete}
-                  className="w-full text-left px-4 py-2 hover:bg-red-600/20 
+            )}
+            <li>
+              <button
+                onClick={() => {
+                  onDelete();
+                  setOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-red-600/20 
                             hover:text-red-400 transition rounded-lg flex items-center gap-2"
-                >
-                  <p className="loginput"> 🗑 Delete</p>
-                 
-                </button>
-              </li>
-            </ul>
-          </div>
-
+              >
+                🗑 Delete
+              </button>
+            </li>
+          </ul>
+        </div>
       )}
     </div>
   );

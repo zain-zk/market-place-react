@@ -1,10 +1,8 @@
 // src/Components/ThemeLight.js
 import React, { useEffect, useState } from "react";
-import { WiMoonAltWaxingGibbous1 } from "react-icons/wi";
-import { MdWbSunny } from "react-icons/md";
-import { GiSunflower } from "react-icons/gi";
 import moon from "../assets/moon-svgrepo-com.svg";
 import sun from "../assets/sun-svgrepo-com.svg";
+
 export default function ThemeLight() {
   const [isLight, setIsLight] = useState(() => {
     // on first render check localStorage
@@ -24,15 +22,15 @@ export default function ThemeLight() {
   return (
     <button
       onClick={() => setIsLight((prev) => !prev)}
-      className="relative text-3xl cursor-pointer transition duration-300 z-50 group"
+      className="relative text-3xl  transition duration-300 z-50 group"
     >
       {/* Icon */}
       {isLight ? (
         // <WiMoonAltWaxingGibbous1 className="text-blue-300 group-hover:text-blue-500 transition duration-300" />
-        <img src={moon} alt="Moon" className="w-10 h-10 " />
+        <img src={moon} alt="Moon" className="w-5 h-5 " />
       ) : (
         // <GiSunflower className="text-yellow-300 group-hover:text-yellow-400 transition duration-300" />
-        <img src={sun} alt="Sun" className="w-10 h-10  " />
+        <img src={sun} alt="Sun" className="w-5 h-5  " />
       )}
 
       {/* Glow effect for Moon */}

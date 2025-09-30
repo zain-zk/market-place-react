@@ -1,166 +1,247 @@
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
-  FaTimes,
   FaUser,
   FaClock,
   FaDollarSign,
-  FaFileAlt,
   FaCheck,
   FaBan,
   FaComments,
+  FaArrowLeft,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import { notifyError } from "../utils/toast";
+import Sidebar from "../Components/Sidebar";
 
+// Status pill colors
 const statusColors = {
   Pending: "bg-yellow-400 text-black",
-  Accepted: "bg-green-500 text-white",
+  Accepted: "bg-blue-600 text-white",
   Declined: "bg-red-500 text-white",
 };
 
-const ViewBidsModal = ({ isOpen, onClose, bids, onUpdateStatus }) => {
+const JobDetailsPage = () => {
+  const { reqId } = useParams();
   const navigate = useNavigate();
+  const [job, setJob] = useState(null);
+  const [bids, setBids] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobAndBids = async () => {
+      try {
+        setLoading(true);
+        const jobRes = await axiosInstance.get(`/requirements/${reqId}`);
+        setJob(jobRes.data);
+        const bidsRes = await axiosInstance.get(
+          `/bids/requirements/${reqId}/bids`
+        );
+        setBids(bidsRes.data || []);
+      } catch (err) {
+        console.error(err);
+        notifyError("Error loading job details");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (reqId) fetchJobAndBids();
+  }, [reqId]);
+
+  const handleUpdateStatus = async (bidId, status) => {
+    try {
+      await axiosInstance.put(`/bids/${bidId}/status`, { status });
+      setBids((prev) =>
+        prev.map((b) => (b._id === bidId ? { ...b, status } : b))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  if (loading)
+    return (
+      <p className="text-center text-gray-300 bg-black h-screen flex items-center justify-center">
+        Loading…
+      </p>
+    );
+  if (!job)
+    return (
+      <p className="text-center text-red-500 bg-black h-screen flex items-center justify-center">
+        Job not found
+      </p>
+    );
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black z-40"
-            onClick={onClose}
-          />
+    <>
+      <Sidebar />
+      <div className="min-h-screen bg-black text-gray-200">
+        {/* Header */}
+        <header className="bg-black sticky top-0 z-10 mt-16">
+          <div className="flex justify-end px-4 py-4">
+            <button
+              onClick={() => navigate("/postedtasks")}
+              className="flex items-center gap-2 cursor-pointer text-white hover:text-blue-400 transition"
+            >
+              <FaArrowLeft /> Back to My Requirements
+            </button>
+          </div>
+        </header>
 
-          {/* Modal */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 50 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                       w-full max-w-2xl bg-gradient-to-br from-black to-green-950 
-                       rounded-2xl shadow-2xl z-50 overflow-hidden"
-          >
-            {/* Header */}
-            <div className="flex justify-between items-center p-6 border-b border-green-700/50">
-              <h2 className="text-2xl font-bold text-green-400 flex items-center gap-2">
-                📋 Bids Received
-              </h2>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-white transition"
-              >
-                <FaTimes size={24} />
-              </button>
-            </div>
+        {/* Summary boxes */}
+        <section className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6 px-4">
+          <div className="rounded-2xl bg-black border border-blue-800/40 p-6 text-center">
+            <p className="text-sm text-gray-400">Total Bids</p>
+            <p className="text-3xl font-bold text-blue-400">{bids.length}</p>
+          </div>
+          <div className="rounded-2xl bg-black border border-blue-800/40 p-6 text-center">
+            <p className="text-sm text-gray-400">Pending</p>
+            <p className="text-3xl font-bold text-yellow-400">
+              {bids.filter((b) => b.status === "Pending").length}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-black border border-blue-800/40 p-6 text-center">
+            <p className="text-sm text-gray-400">Declined</p>
+            <p className="text-3xl font-bold text-red-400">
+              {bids.filter((b) => b.status === "Declined").length}
+            </p>
+          </div>
+        </section>
 
-            {/* Content */}
-            <div className="p-6 max-h-[70vh] overflow-y-auto space-y-4">
-              {bids.length === 0 ? (
-                <p className="text-gray-400 text-center">
-                  No bids placed yet 😔
-                </p>
-              ) : (
-                bids.map((bid) => (
-                  <div
-                    key={bid._id}
-                    className="bg-green-900/30 border border-green-700/40 
-                               rounded-xl p-5 hover:shadow-lg hover:shadow-green-600/20 
-                               transition transform hover:-translate-y-1"
-                  >
-                    {/* Header Row */}
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                        <FaUser className="text-green-400" />
-                        {bid.provider?.name || "Unknown Provider"}
-                      </h3>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          statusColors[bid.status]
-                        }`}
-                      >
-                        {bid.status}
-                      </span>
-                    </div>
+        <main className="max-w-6xl mx-auto px-4 py-8">
+          {/* Job Info */}
+          <section className="rounded-2xl bg-black border border-blue-800/40 shadow p-8 mb-10">
+            <h1 className="text-4xl font-bold text-blue-400 mb-4">
+              {job.category}
+            </h1>
+            <h3 className="text-2xl font-bold text-blue-300 mb-4">
+              {job.title}
+            </h3>
+            <p className="text-gray-300 text-lg mb-8">{job.description}</p>
 
-                    {/* Bid Details */}
-                    <div className="space-y-2 text-gray-300 text-sm mb-4">
-                      <p className="flex items-center gap-2">
-                        <FaDollarSign className="text-green-400" />
-                        Bid Amount:{" "}
-                        <span className="font-semibold text-white">
-                          PKR {bid.amount}
-                        </span>
-                      </p>
-
-                      <p className="flex items-center gap-2">
-                        <FaClock className="text-green-400" />
-                        Delivery Time:{" "}
-                        <span className="font-semibold text-white">
-                          {bid.deliveryTime} hrs
-                        </span>
-                      </p>
-
-                      {bid.proposal && (
-                        <p className="flex items-start gap-2">
-                          <FaFileAlt className="text-green-400 mt-1" />
-                          <span>{bid.proposal}</span>
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    {bid.status === "Pending" && (
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => onUpdateStatus(bid._id, "Accepted")}
-                          className="flex-1 flex items-center justify-center gap-2 
-                                     bg-green-600 hover:bg-green-700 
-                                     text-white font-medium py-2 px-4 rounded-lg 
-                                     transition shadow-md hover:shadow-green-500/30"
-                        >
-                          <FaCheck /> Accept
-                        </button>
-                        <button
-                          onClick={() => onUpdateStatus(bid._id, "Declined")}
-                          className="flex-1 flex items-center justify-center gap-2 
-                                     bg-red-600 hover:bg-red-700 
-                                     text-white font-medium py-2 px-4 rounded-lg 
-                                     transition shadow-md hover:shadow-red-500/30"
-                        >
-                          <FaBan /> Decline
-                        </button>
-                      </div>
-                    )}
-
-                    {/* ✅ Chat Button for Accepted Bids */}
-                    {bid.status === "Accepted" && (
-                      <div className="mt-3">
-                        <button
-                          onClick={() =>
-                            navigate(`/chat/${bid.provider?._id}/${bid._id}`)
-                          }
-                          className="w-full flex items-center justify-center gap-2 
-                              bg-blue-600 hover:bg-blue-700 
-                              text-white font-medium py-2 px-4 rounded-lg 
-                              transition shadow-md hover:shadow-blue-500/30"
-                        >
-                          <FaComments /> Chat with{" "}
-                          {bid.provider?.name || "Provider"}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-base">
+              <div className="flex items-center gap-3">
+                <FaDollarSign className="text-blue-400 text-2xl" />
+                <div>
+                  <p className="font-semibold text-gray-400">Budget</p>
+                  <p className="text-white text-lg">PKR {job.price}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <FaClock className="text-blue-400 text-2xl" />
+                <div>
+                  <p className="font-semibold text-gray-400">Location</p>
+                  <p className="text-white text-lg">{job.location}</p>
+                </div>
+              </div>
+              {job.category && (
+                <div>
+                  <p className="font-semibold text-gray-400">Category</p>
+                  <p className="text-white text-lg">{job.category}</p>
+                </div>
+              )}
+              {job.createdAt && (
+                <div>
+                  <p className="font-semibold text-gray-400">Posted On</p>
+                  <p className="text-white text-lg">
+                    {new Date(job.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
               )}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </section>
+
+          {/* Bids */}
+          <h2 className="text-3xl font-bold text-blue-400 mb-6">
+            Providers Bids
+          </h2>
+
+          {bids.length === 0 ? (
+            <p className="text-gray-400">No bids yet 😔</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <div className="min-w-[800px] grid grid-cols-6 bg-blue-800/60 text-white font-semibold px-4 py-3 rounded-t-xl">
+                <span>Provider</span>
+                <span>Delivery Time</span>
+                <span>Proposal</span>
+                <span>Amount</span>
+                <span>Status</span>
+                <span className="text-center">Actions</span>
+              </div>
+
+              {bids.map((bid) => (
+                <div
+                  key={bid._id}
+                  className="min-w-[800px] grid grid-cols-6 items-center bg-black border-b border-blue-800/40 px-4 py-4 hover:bg-blue-950/30 transition"
+                >
+                  <div className="flex items-center gap-2">
+                    <FaUser className="text-blue-400 text-lg" />
+                    <span className="font-medium">
+                      {bid.provider?.name || "Unknown"}
+                    </span>
+                  </div>
+
+                  <span className="text-gray-300">{bid.deliveryTime} hrs</span>
+
+                  <span className="text-gray-300 truncate max-w-[200px]">
+                    {bid.proposal || "-"}
+                  </span>
+
+                  <span className="font-semibold text-white">
+                    PKR {bid.amount}
+                  </span>
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-center text-sm font-semibold ${
+                      statusColors[bid.status]
+                    }`}
+                  >
+                    {bid.status}
+                  </span>
+
+                  <div className="flex justify-center gap-3">
+                    {bid.status === "Pending" && (
+                      <>
+                        <button
+                          onClick={() =>
+                            handleUpdateStatus(bid._id, "Accepted")
+                          }
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:scale-[1.02] transition"
+                        >
+                          <FaCheck />
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleUpdateStatus(bid._id, "Declined")
+                          }
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-red-800 text-white hover:scale-[1.02] transition"
+                        >
+                          <FaBan />
+                        </button>
+                      </>
+                    )}
+                    {bid.status === "Accepted" && (
+                      <button
+                        onClick={() =>
+                          navigate(`/chat/${bid.provider?._id}/${bid._id}`)
+                        }
+                        className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:scale-[1.02] transition"
+                      >
+                        <FaComments />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+    </>
   );
 };
 
-export default ViewBidsModal;
+export default JobDetailsPage;

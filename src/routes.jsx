@@ -10,7 +10,9 @@ import Mybid from "./Pages/Mybid";
 import ChatPage from "./Components/Chat";
 import { Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./Components/PrivateRoutes";
-
+import DashboardMain from "./Pages/DashboardMain";
+import JobDetailsPage from "./Components/ViewBids";
+import BidDrawer from "./Components/BidDrawer";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -42,6 +44,38 @@ export const AppRoutes = () => {
         }
       />
       <Route
+        path="/detail-bids"
+        element={
+          // <PrivateRoute>
+          <BidDrawer />
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path="/dashboard/client"
+        element={
+          // <PrivateRoute allowedRoles={"provider"}>
+          <DashboardMain role="client" />
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path="/dashboard/provider"
+        element={
+          // <PrivateRoute allowedRoles={"provider"}>
+          <DashboardMain role="provider" />
+          // {/* </PrivateRoute> */}
+        }
+      />
+      <Route
+        path="/requirements/:reqId/jobdetails"
+        element={
+          // <PrivateRoute allowedRoles={"provider"}>
+          <JobDetailsPage />
+          // </PrivateRoute>
+        }
+      />
+      <Route
         path="/postedtasks"
         element={
           <PrivateRoute>
@@ -65,6 +99,7 @@ export const AppRoutes = () => {
           </PrivateRoute>
         }
       />
+
       <Route
         path="/chat/:otherUserId/:bidId"
         element={
@@ -75,7 +110,7 @@ export const AppRoutes = () => {
       />
 
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/register-role" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

@@ -39,12 +39,6 @@ export default function ProfilePictureUpload({
       // ✅ Store avatar in localStorage so Sidebar can always load it
       localStorage.setItem("avatarUrl", data.avatarUrl);
 
-      // ✅ Update user object in localStorage
-      // localStorage.setItem(
-      //   JSON.stringify({ ...user, avatarUrl: data.avatarUrl })
-      //   "user",
-      // );
-
       // 🔔 Dispatch custom event so Sidebar updates immediately
       window.dispatchEvent(new Event("avatarUpdated"));
 
@@ -56,7 +50,6 @@ export default function ProfilePictureUpload({
       );
 
       // Revert to old avatar if exists
-      // const user = JSON.parse(localStorage.getItem("user"));
       if (user?.avatarUrl) {
         setProfilePic(user.avatarUrl);
       }
@@ -78,7 +71,7 @@ export default function ProfilePictureUpload({
 
       <label
         htmlFor="profileUpload"
-        className="relative group w-64 h-64 rounded-xl overflow-hidden border-2 border-green-600 cursor-pointer"
+        className="relative group w-64 h-64 rounded-xl overflow-hidden border-2 border-blue-600 cursor-pointer"
       >
         {profilePic ? (
           <img

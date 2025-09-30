@@ -1,6 +1,6 @@
 // src/pages/MainPage.jsx
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaMoneyBillWave,
@@ -18,47 +18,36 @@ import axiosInstance from "../utils/axiosInstance";
 const MainPage = ({ role: propRole }) => {
   const navigate = useNavigate();
   const { user } = useContext(userContext);
-  // ✅ get user from context
   const role = propRole || user?.role;
   const userId = user?._id || user?.id;
 
-  // ✅ states for posting requirements
+  // client states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState("");
 
-  // ✅ provider side state
+  // provider states
   const [requirements, setRequirements] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(false);
 
-  // ✅ drawer for placing bids
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-
-  // ✅ search & filter
+  // filters
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedProfession, setSelectedProfession] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
-  // 🔹 fetch tasks
+  const cities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Sargodha"];
+
   useEffect(() => {
-    if (role === "provider") {
-      fetchRequirements();
-    }
+    if (role === "provider") fetchRequirements();
   }, [role]);
 
   const fetchRequirements = async () => {
     try {
       setLoadingTasks(true);
       const res = await axiosInstance.get("/requirements");
-      const data = res.data;
-      if (res.status === 200) {
-        setRequirements(data);
-      } else {
-        console.error("Error fetching requirements:", data.message);
-      }
+      if (res.status === 200) setRequirements(res.data);
     } catch (err) {
       console.error("❌ Server error:", err);
     } finally {
@@ -66,51 +55,30 @@ const MainPage = ({ role: propRole }) => {
     }
   };
 
-  // ✅ filter tasks
   const filteredTasks = requirements.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.profession?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesProfession = selectedProfession
-      ? task.profession?.toLowerCase() === selectedProfession.toLowerCase()
-      : true;
+      task.location.toLowerCase().includes(searchTerm.toLowerCase());
     const cityMatch = selectedCity
       ? task.location?.toLowerCase().includes(selectedCity.toLowerCase())
       : true;
-
-    return matchesProfession && cityMatch && matchesSearch;
+    return matchesSearch && cityMatch;
   });
-  const cities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Sargodha"];
 
-  // ✅ handle form submit (client posting requirement)
   const handlePostRequirement = async (e) => {
     e.preventDefault();
-
-    if (!title || !description || !price || !location) {
+    if (!title || !description || !price || !location || !category) {
       notifyInfo("⚠️ Please fill all fields");
       return;
     }
-
     try {
       setLoading(true);
       const res = await axiosInstance.post(
         "/requirements",
-        {
-          client: userId,
-          title,
-          description,
-          price,
-          location,
-        }, // this is the request body
-        {
-          headers: { "Content-Type": "application/json" }, // optional; axios sets JSON by default
-        }
+        { client: userId, title, description, price, location, category },
+        { headers: { "Content-Type": "application/json" } }
       );
-
-      const data = res.data;
       if (res.status === 200) {
         notifySuccess("✅ Requirement posted successfully!");
         setTitle("");
@@ -118,9 +86,7 @@ const MainPage = ({ role: propRole }) => {
         setPrice("");
         setLocation("");
         navigate("/postedtasks");
-      } else {
-        notifyInfo(data.message || "❌ Something went wrong");
-      }
+      } else notifyInfo(res.data.message || "❌ Something went wrong");
     } catch (err) {
       console.error(err);
       notifyError("❌ Server error, please try again later.");
@@ -129,163 +95,133 @@ const MainPage = ({ role: propRole }) => {
     }
   };
 
-  const handleBidSubmit = (bid) => {
-    // console.log(`Bid of PKR ${bid} placed on:`, selectedTask);
-    // TODO: send bid + taskId to backend API
-  };
-
   return (
-    <div className="flex min-h-screen  bg-black text-white">
+    <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
       <Sidebar role={role} />
 
       {/* Main Content */}
-      <main className="flex-1 p-10  bg-gradient-to-br from-black to-green-950">
+      <main className="flex-1 pt-20 px-4 p-8 bg-gradient-to-br ">
         {role === "client" ? (
-          // ================== CLIENT ==================
-          <main className="flex-1 lg:ml-64  pt-20 lg:pt-10 min-h-screen">
-            <div className="max-w-4xl mx-auto px-4   sm:px-6 lg:px-8">
-              {/* Header */}
-              <div className="text-center  mb-10">
-                <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
-                  Welcome, Client
-                </h1>
-                <p className="text-gray-400 text-lg mt-4">
-                  Post your requirements and connect with top service providers
-                  tailored to your needs.
-                </p>
-              </div>
-
-              {/* Card */}
-              <motion.div
-                initial={{ y: 40, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="bg-gradient-to-br from-black/85 to-green-950/80 
-                 border border-green-800/40 backdrop-blur-xl 
-                 p-6 sm:p-10 rounded-3xl shadow-2xl 
-                 hover:shadow-green-900/30 transition"
-              >
-                <h2 className="text-2xl font-semibold text-green-300 mb-8 text-center">
-                  Post a New Requirement
-                </h2>
-
-                <form onSubmit={handlePostRequirement} className="grid gap-7">
-                  {/* Title */}
-                  <div>
-                    <label className="block loginput text-sm font-medium text-gray-300 mb-2">
-                      Requirement Title
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter a clear title"
-                      className="w-full loginput p-4 rounded-xl bg-black/70 border border-green-700 text-white 
-                       placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <div>
-                    <label className="block loginput text-sm font-medium text-gray-300 mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      placeholder="Describe your requirement in detail..."
-                      rows="5"
-                      className="w-full loginput p-4 rounded-xl bg-transparent border border-green-700 text-white 
-                       placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition resize-none"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                    ></textarea>
-                  </div>
-
-                  {/* Budget + Location */}
-                  <div className="grid  grid-cols-1 md:grid-cols-2 gap-7">
-                    <div>
-                      <label className="block loginput text-sm font-medium text-gray-300 mb-2">
-                        Budget (PKR)
-                      </label>
-                      <input
-                        type="number"
-                        placeholder="Enter your budget"
-                        className="w-full p-4 rounded-xl loginput bg-black/70 border border-green-700 text-white 
-                         placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block loginput text-sm font-medium text-gray-300 mb-2">
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Karachi"
-                        className="w-full loginput p-4 rounded-xl bg-black/70 border border-green-700 text-white 
-                         placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Button */}
-                  <div className="text-center mt-4">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="inline-block bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 
-                       text-black px-10 py-4 rounded-xl font-semibold shadow-md hover:shadow-lg 
-                       hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {loading ? "Posting..." : "Post Requirement"}
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
+          // CLIENT SIDE
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                {/* Client */}
+              </h1>
+              <p className="text-gray-300 text-lg mt-4">
+                Post your Jobs and connect with top service providers.
+              </p>
             </div>
-          </main>
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-br  
+                border border-blue-700/40 backdrop-blur-xl 
+                p-6 sm:p-10 rounded-3xl shadow-2xl hover:shadow-blue-900/30 transition"
+            >
+              <h2 className="text-2xl font-semibold text-blue-400 mb-8 text-center">
+                Post a New Job
+              </h2>
+              <form onSubmit={handlePostRequirement} className="grid gap-7">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Select or Enter Category
+                  </label>
+                  <input
+                    list="categories"
+                    placeholder="Type or select category (e.g. Plumber)"
+                    className="w-full p-4 rounded-xl bg-black/70 border border-blue-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                  />
+                  <datalist id="categories">
+                    <option value="Plumber" />
+                    <option value="Labour" />
+                    <option value="Carpenter" />
+                    <option value="Electrician" />
+                    <option value="Painter" />
+                  </datalist>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Requirement Title"
+                  className="w-full p-4 rounded-xl bg-black/70 border border-blue-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+                <textarea
+                  placeholder="Describe your requirement in detail..."
+                  rows="5"
+                  className="w-full p-4 rounded-xl bg-transparent border border-blue-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 resize-none"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                ></textarea>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+                  <input
+                    type="number"
+                    placeholder="Budget (PKR)"
+                    className="w-full p-4 rounded-xl bg-black/70 border border-blue-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Location (e.g. Karachi)"
+                    className="w-full p-4 rounded-xl bg-black/70 border border-blue-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="text-center mt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-block cursor-pointer bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 
+                      text-white px-10 py-4 rounded-xl font-semibold shadow-md hover:scale-[1.02] transition-all disabled:opacity-50"
+                  >
+                    {loading ? "Posting..." : "Post This Job"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
         ) : (
-          // ================== PROVIDER ==================
-          <div className="flex-1  lg:ml-64 pt-20 lg:pt-2  p-4 ">
-            <h1 className="text-3xl font-bold mb-6 text-green-400 flex items-center gap-2">
-              Welcome, Service Provider <MdWork className="text-yellow-400" />
+          // PROVIDER SIDE
+          <div className="flex flex-col items-center w-full px-4">
+            <h1 className="text-4xl font-bold mb-3 text-blue-400 flex items-center gap-2 text-center">
+              Explore Jobs Posted <MdWork className="text-blue-300" />
             </h1>
-            <p className="text-gray-300 mb-4">
-              Browse projects and place your bids to get started ✨
+            <p className="text-gray-300 mb-8 text-center text-lg">
+              Find tasks that match your skills and place your bids to get
+              started ✨
             </p>
 
-            {/* 🔍 Search Bar */}
-            <div className="flex flex-col gap-3  mb-6">
-              <div className="relative ">
-                <FaSearch className="absolute  left-3 top-3 text-gray-400" />
+            <div className="w-full max-w-5xl mb-8">
+              <div className="relative">
+                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search by profession, city or title..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full serviceinput pl-10 pr-4 py-2 rounded-xl bg-gray-800/50 text-gray-200
-                             border border-gray-600/30 focus:border-emerald-500 focus:ring-1 
-                             focus:ring-emerald-500 outline-none"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-800/50 text-gray-200 border border-gray-600/30 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-lg"
                 />
               </div>
-
-              {/* 🎯 Profession Tags */}
             </div>
-            {/* 🏙 City Filter */}
-            <div className="flex gap-2 mb-6 flex-wrap">
+
+            <div className="flex gap-2 mb-10 flex-wrap justify-center">
               <button
                 onClick={() => setSelectedCity("")}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   selectedCity === ""
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-blue-600 text-white"
                     : "bg-gray-700/50 text-gray-300 hover:bg-gray-600"
                 }`}
               >
@@ -295,9 +231,9 @@ const MainPage = ({ role: propRole }) => {
                 <button
                   key={city}
                   onClick={() => setSelectedCity(city)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     selectedCity === city
-                      ? "bg-emerald-600 text-white"
+                      ? "bg-blue-600 text-white"
                       : "bg-gray-700/50 text-gray-300 hover:bg-gray-600"
                   }`}
                 >
@@ -305,69 +241,77 @@ const MainPage = ({ role: propRole }) => {
                 </button>
               ))}
             </div>
+
             {/* Tasks */}
             {loadingTasks ? (
               <p className="text-gray-400">⏳ Loading tasks...</p>
             ) : filteredTasks.length > 0 ? (
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 w-full">
                 {filteredTasks.map((task) => (
                   <div
                     key={task._id}
-                    className="group relative overflow-hidden"
+                    className="relative backdrop-blur-xl 
+              border border-blue-700/100 rounded-3xl p-8 hover:border-blue-500/50 
+              hover:shadow-2xl hover:shadow-blue-500/20 group-hover:scale-[1.02] group-hover:-translate-y-1 transition"
                   >
-                    <div
-                      className="relative bg-gradient-to-br from-gray-900/80 to-black/60 backdrop-blur-xl 
-                                 border border-emerald-700/100 rounded-3xl p-8 h-full
-                                 hover:border-emerald-500/50 transition-all duration-500
-                                 bgcard
-                                 hover:shadow-2xl hover:shadow-emerald-500/20
-                                 group-hover:scale-[1.02] group-hover:-translate-y-1"
-                    >
-                      <div className="relative z-10">
-                        <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                          {task.title} 📋
-                        </h2>
-                        <p className="text-gray-300 mb-4">{task.description}</p>
-
-                        <div className="space-y-2 text-sm">
-                          <p className="text-emerald-400 flex items-center gap-2">
-                            <FaMoneyBillWave /> Budget: PKR{" "}
-                            {task.price?.toLocaleString()}
-                          </p>
-                          <p className="text-gray-300 flex items-center gap-2">
-                            <FaMapMarkerAlt /> Location: {task.location}
-                          </p>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            setSelectedTask(task);
-                            setIsDrawerOpen(true);
-                          }}
-                          className="mt-5 w-full flex items-center justify-center gap-2
-                                     bg-gradient-to-r from-emerald-600 to-green-600 
-                                     text-white font-semibold py-2.5 rounded-xl 
-                                     hover:from-emerald-500 hover:to-green-500
-                                     hover:scale-[1.03] hover:shadow-lg transition-all"
+                    <div className="flex justify-between items-center">
+                      <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                        {task.category} 📋
+                      </h2>
+                      <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold
+                          ${
+                            task.status === "Pending"
+                              ? "bg-yellow-500 "
+                              : task.status === "Active"
+                              ? "bg-blue-600"
+                              : task.status === "Completed"
+                              ? "bg-green-500 "
+                              : "bg-green-700 "
+                          }`}
                         >
-                          <FaGavel className="text-lg" /> Place Bid
-                        </button>
-                      </div>
+                          {task.status}
+                        </span>
+                      </h3>
                     </div>
+                    <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
+                      {task.title}
+                    </h3>
+
+                    <p className="text-gray-300 mb-4">{task.description}</p>
+                    <div className="space-y-2 text-sm">
+                      <p className="text-blue-400 flex items-center gap-2">
+                        <FaMoneyBillWave /> Budget: PKR{" "}
+                        {task.price?.toLocaleString()}
+                      </p>
+                      <p className="text-gray-300 flex items-center gap-2">
+                        <FaMapMarkerAlt /> Location: {task.location}
+                      </p>
+                    </div>
+                    {(task.status === "Active" ||
+                      task.status === "Pending") && (
+                      <Link
+                        to={"/detail-bids"}
+                        state={{ task }}
+                        className="mt-5 w-full flex items-center justify-center gap-2
+                             bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold py-2.5 rounded-xl 
+                             hover:from-blue-500 hover:to-blue-400 hover:scale-[1.03] hover:shadow-lg transition-all"
+                      >
+                        <FaGavel className="text-lg" /> Place Bid
+                      </Link>
+                    )}
+                    {task.status === "Completed" && (
+                      <p className="mt-5 w-full text-center text-green-400 font-semibold py-2.5 rounded-xl border border-green-400">
+                        ✅ Task Completed
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
             ) : (
               <p className="text-gray-500">🙅‍♂️ No matching tasks found.</p>
             )}
-
-            {/* ✅ Drawer for Bidding */}
-            <BidDrawer
-              isOpen={isDrawerOpen}
-              onClose={() => setIsDrawerOpen(false)}
-              onSubmit={handleBidSubmit}
-              selectedTask={selectedTask}
-            />
           </div>
         )}
       </main>

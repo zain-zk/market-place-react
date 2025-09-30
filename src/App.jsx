@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-// import socket from "./socket";
 import ToastProvider from "./Components/ToastProvider";
-import { notifySuccess } from "./utils/toast";
 import userContext from "./contexts/userContext";
-import axios from "axios";
 import { AppRoutes } from "./routes";
 import axiosInstance from "./utils/axiosInstance";
 
@@ -38,6 +35,7 @@ const App = () => {
     <userContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
         <AppRoutes />
+
         <ToastProvider />
       </BrowserRouter>
     </userContext.Provider>

@@ -2,7 +2,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Sidebar from "../Components/Sidebar";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import {
   FaMoneyBillWave,
   FaUserTie,
@@ -10,7 +9,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { MdOutlineDateRange, MdChat } from "react-icons/md";
-import { notifyError, notifyInfo, notifySuccess } from "../utils/toast";
+import { notifySuccess } from "../utils/toast";
 import axiosInstance from "../utils/axiosInstance";
 import userContext from "../contexts/userContext";
 
@@ -20,9 +19,10 @@ const MyBidsPage = () => {
   const providerId = user?._id || user?.id;
   const role = user?.role || "service-provider";
 
+  // theme status chips
   const statusColors = {
-    Pending: "bg-yellow-400 text-black ",
-    Accepted: "bg-green-500 text-white ",
+    Pending: "bg-yellow-400 text-black",
+    Accepted: "bg-blue-500 text-white",
     Declined: "bg-red-500 text-white",
   };
 
@@ -42,7 +42,7 @@ const MyBidsPage = () => {
 
   const handleWithdraw = async (bidId) => {
     try {
-      const res = await axiosInstance.delete(`/bids/${bidId}`);
+      await axiosInstance.delete(`/bids/${bidId}`);
       setMyBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
       notifySuccess("Bid withdrawn successfully ✅");
     } catch (error) {
@@ -55,27 +55,55 @@ const MyBidsPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-black  text-white  flex-1  lg:ml-64 pt-20 lg:pt-2  p-4 ">
+    <div className="  bg-black text-gray-100">
       <Sidebar role={role} />
 
-      <main className="flex-1 p-10   bg-gradient-to-br from-black to-green-950">
-        <h1 className="text-3xl font-bold mb-8 text-green-400">My Bids 📑</h1>
+      <main className="flex-1 p-8 ">
+        <h1 className="text-4xl font-extrabold mb-10 mt-13  text-blue-400 text-center">
+          My Bids 📑
+        </h1>
+
         {myBids.length === 0 ? (
-          <p className="text-gray-400">No bids yet.</p>
+          <p className="text-gray-400 text-center">
+            You haven’t placed any bids yet.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {myBids.map((bid) => (
               <div
                 key={bid._id}
-                className="bg-gradient-to-br from-green-900 bgcard to-green-800 rounded-2xl shadow-xl p-6 flex flex-col justify-between border border-green-700 hover:border-green-400 hover:shadow-2xl transition-all duration-300"
+                className=" rounded-2xl border border-blue-700 shadow-lg hover:shadow-blue-400/30 hover:border-blue-400 transition-all duration-300 p-6 flex flex-col justify-between"
               >
                 {/* Task & Client Info */}
-                <div className="space-y-3   mb-6">
-                  <h2 className="text-2xl font-bold text-green-300">
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-blue-300">
+                      {bid.requirement?.category || "Untitled Task"}
+                    </h2>
+                    <h3 className="text-1xl font-bold text-white mb-2 flex items-center gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-semibold
+                      ${
+                        bid.requirement?.status === "Pending"
+                          ? "bg-yellow-500"
+                          : bid.requirement?.status === "Active"
+                          ? "bg-blue-600"
+                          : bid.requirement?.status === "Completed"
+                          ? "bg-green-500 "
+                          : "bg-green-700"
+                      }`}
+                      >
+                        {bid.requirement?.status}
+                      </span>
+                    </h3>
+                  </div>
+
+                  <h4 className="text-1xl font-bold text-blue-300">
                     {bid.requirement?.title || "Untitled Task"}
-                  </h2>
+                  </h4>
+
                   <p className="text-gray-300 text-sm flex items-center gap-2">
-                    <FaUserTie className="text-green-400" />
+                    <FaUserTie className="text-blue-400" />
                     <span className="font-semibold text-white">
                       Client:
                     </span>{" "}
@@ -125,28 +153,29 @@ const MyBidsPage = () => {
                   {bid.status === "Pending" && (
                     <button
                       onClick={() => handleWithdraw(bid._id)}
-                      className="relative inline-flex items-center gap-2 px-5 py-2 overflow-hidden font-semibold text-white rounded-lg group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 shadow-lg transition-all duration-300"
+                      className="relative inline-flex items-center gap-2 px-4 py-2 overflow-hidden font-semibold text-white rounded-xl group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 shadow-lg transition-all duration-300"
                     >
                       <span className="absolute right-0 w-8 h-32 -mt-12 transition-transform duration-500 rotate-12 translate-x-12 bg-white opacity-10 group-hover:-translate-x-40 ease"></span>
                       <FaTrash /> Withdraw
                     </button>
                   )}
 
-                  {bid.status === "Accepted" && (
-                    <Link
-                      to={`/chat/${bid.requirement?.client?._id}/${bid._id}`}
-                      onClick={() =>
-                        handleChat(
-                          bid.requirement?.client?.name,
-                          bid.requirement?.title
-                        )
-                      }
-                      className="relative inline-flex items-center gap-2 px-5 py-2 overflow-hidden font-semibold text-white rounded-lg group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-600 shadow-lg transition-all duration-300"
-                    >
-                      <span className="absolute right-0 w-8 h-32 -mt-12 transition-transform duration-500 rotate-12 translate-x-12 bg-white opacity-10 group-hover:-translate-x-40 ease"></span>
-                      <MdChat /> Chat
-                    </Link>
-                  )}
+                  {bid.status === "Accepted" &&
+                    bid.requirement?.status === "Active" && (
+                      <Link
+                        to={`/chat/${bid.requirement?.client?._id}/${bid._id}`}
+                        onClick={() =>
+                          handleChat(
+                            bid.requirement?.client?.name,
+                            bid.requirement?.title
+                          )
+                        }
+                        className="relative inline-flex items-center gap-2 px-4 py-2 overflow-hidden font-semibold text-white rounded-xl group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-600 shadow-lg transition-all duration-300"
+                      >
+                        <span className="absolute right-0 w-8 h-32 -mt-12 transition-transform duration-500 rotate-12 translate-x-12 bg-white opacity-10 group-hover:-translate-x-40 ease"></span>
+                        <MdChat /> Chat
+                      </Link>
+                    )}
                 </div>
               </div>
             ))}
