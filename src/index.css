@@ -41,6 +41,12 @@ body.light-theme .text-white,
 body.light-theme .text-gray-300 {
   color: #00274e !important; /* black-ish text */
 }
+body.light-theme .dashboardText {
+  color: #d6e4f1 !important; /* black-ish text */
+}
+body.light-theme .dashboardTextCard {
+  color: #d7dee6 !important; /* black-ish text */
+}
 body.light-theme .register {
   color: #f5faff !important; /* black-ish text */
 }
