@@ -56,7 +56,6 @@ const ClientDashboard = () => {
     requirements: 0,
     declined: 0,
   });
-
   useEffect(() => {
     if (!user?._id) return;
     const fetchData = async () => {

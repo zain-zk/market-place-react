@@ -54,19 +54,29 @@ export const AppRoutes = () => {
       <Route
         path="/dashboard/client"
         element={
-          // <PrivateRoute allowedRoles={"provider"}>
-          <DashboardMain role="client" />
-          // </PrivateRoute>
+          <PrivateRoute allowedRoles={"client"}>
+            <DashboardMain role="client" />
+          </PrivateRoute>
         }
       />
       <Route
         path="/dashboard/provider"
         element={
-          // <PrivateRoute allowedRoles={"provider"}>
-          <DashboardMain role="provider" />
-          // {/* </PrivateRoute> */}
+          <PrivateRoute allowedRoles={"provider"}>
+            <DashboardMain role="provider" />
+          </PrivateRoute>
         }
       />
+      {/* <Route element={<PrivateRoute allowedRoles={"client"} />}>
+        <Route
+          path="/dashboard/client"
+          element={<DashboardMain role="client" />}
+        />
+        <Route
+          path="/dashboard/provider"
+          element={<DashboardMain role="provider" />}
+        />
+      </Route> */}
       <Route
         path="/requirements/:reqId/jobdetails"
         element={

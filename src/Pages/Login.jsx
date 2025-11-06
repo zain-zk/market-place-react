@@ -67,6 +67,9 @@ const LoginPage = () => {
       notifyError("Something went wrong");
     }
   };
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:5000/auth/google", "_self");
+  };
 
   return (
     <div className="flex min-h-screen justify-center items-center bg-black">
@@ -140,6 +143,21 @@ const LoginPage = () => {
             >
               Login
             </button>
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <a
+                    class="btn btn-block btn-social btn-google"
+                    href="/auth"
+                    role="button"
+                    onClick={handleGoogleLogin}
+                  >
+                    <i class="fab fa-google"></i>
+                    Sign In with Google
+                  </a>
+                </div>
+              </div>
+            </div>
           </form>
           <div className="flex gap-20">
             <p className="text-gray-400 text-sm mt-6">
