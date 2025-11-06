@@ -71,10 +71,10 @@ export default function LandingPage() {
               className="h-40 w-full object-cover rounded-lg mb-4"
             />
             <FaWrench className="text-5xl text-blue-500 mx-auto mb-4" />
-            <h4 className="text-xl font-semibold text-white">
+            <h4 className="text-xl font-semibold text-white  dashboardText">
               Verified Experts
             </h4>
-            <p className="text-gray-300 mt-3">
+            <p className="text-gray-300 mt-3 dashboardTextCard">
               Hire from a pool of trusted service providers near you.
             </p>
           </div>
@@ -85,10 +85,10 @@ export default function LandingPage() {
               className="h-40 w-full object-cover rounded-lg mb-4"
             />
             <FaClipboardList className="text-5xl text-blue-500 mx-auto mb-4" />
-            <h4 className="text-xl font-semibold text-white">
+            <h4 className="text-xl font-semibold text-white dashboardText">
               Quick Job Posting
             </h4>
-            <p className="text-gray-300 mt-3">
+            <p className="text-gray-300 mt-3 dashboardTextCard">
               Post your requirements and get bids within minutes.
             </p>
           </div>
@@ -99,8 +99,10 @@ export default function LandingPage() {
               className="h-40 w-full object-cover rounded-lg mb-4"
             />
             <AiOutlineCheckCircle className="text-5xl text-blue-500 mx-auto mb-4" />
-            <h4 className="text-xl font-semibold text-white">Safe & Secure</h4>
-            <p className="text-gray-300 mt-3">
+            <h4 className="text-xl font-semibold text-white  dashboardText">
+              Safe & Secure
+            </h4>
+            <p className="text-gray-300 mt-3 dashboardTextCard">
               Payments are only released once the job is completed.
             </p>
           </div>
